@@ -109,7 +109,8 @@
       {/if}
     </div>
     {#if tab === 'palbox'}
-      <PalTable pals={save.world.pals} players={save.world.players} />
+      <PalTable pals={save.world.pals} players={save.world.players}
+                ongoto={(id) => { breedTarget = id; tab = 'breeding'; }} />
     {:else if tab === 'breeding'}
       <Breeding pals={scopedPals} players={save.world.players} bind:targetId={breedTarget} />
     {:else if tab === 'coverage'}

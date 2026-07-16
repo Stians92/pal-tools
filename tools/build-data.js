@@ -27,6 +27,18 @@ const species = db.Pals.map(p => ({
   prio: p.BreedingPowerPriority,
   male: db.BreedingGenderProbability[p.InternalName]?.MALE ?? 0.5,
   guaranteed: p.GuaranteedPassivesInternalIds || [],
+  // species stats for the detail view
+  rarity: p.Rarity,
+  size: p.Size,
+  nocturnal: p.Nocturnal,
+  price: p.Price,
+  wild: [p.MinWildLevel, p.MaxWildLevel],
+  stats: {
+    hp: p.Hp, atk: p.Attack, def: p.Defense,
+    stamina: p.Stamina, food: p.FoodAmount,
+    walk: p.WalkSpeed, run: p.RunSpeed, sprint: p.RideSprintSpeed, transport: p.TransportSpeed,
+  },
+  work: Object.fromEntries(Object.entries(p.WorkSuitability || {}).filter(([, v]) => v > 0)),
 })).sort((a, b) => a.dex - b.dex || (a.variant ? 1 : -1));
 
 const byId = new Map(species.map(s => [s.id, s]));

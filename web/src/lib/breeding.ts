@@ -13,6 +13,17 @@ export interface Species {
   prio: number;
   male: number;
   guaranteed: string[];
+  rarity: number;
+  size: string;
+  nocturnal: boolean;
+  price: number;
+  wild: number[]; // [min, max] wild level
+  stats: {
+    hp: number; atk: number; def: number;
+    stamina: number; food: number;
+    walk: number; run: number; sprint: number; transport: number;
+  };
+  work: Record<string, number>;
 }
 
 export interface PassiveInfo {
@@ -109,6 +120,23 @@ function childOfUncached(aId: string, bId: string, ga?: Gender | null, gb?: Gend
     }
   }
   return best ? best.id : null;
+}
+
+/** Every species this one can pair with, and the resulting child. */
+export interface MateOption {
+  mate: Species;
+  child: string;
+}
+export function matesFor(speciesId: string, gender?: Gender | null): MateOption[] {
+  const me = speciesById(speciesId);
+  if (!me) return [];
+  const otherGender: Gender | null = gender === 'Male' ? 'Female' : gender === 'Female' ? 'Male' : null;
+  const out: MateOption[] = [];
+  for (const s of species) {
+    const child = childOf(me.id, s.id, gender ?? null, otherGender);
+    if (child) out.push({ mate: s, child });
+  }
+  return out;
 }
 
 // ---- passive inheritance probability ----------------------------------------------

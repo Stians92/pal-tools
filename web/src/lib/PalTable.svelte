@@ -2,8 +2,22 @@
   import type { Pal, Player } from './paltools';
   import { speciesName, passiveName, speciesIcon, sortPassivesByRank } from './breeding';
   import Passive from './Passive.svelte';
+  import PalDetail from './PalDetail.svelte';
 
-  let { pals, players }: { pals: Pal[]; players: Player[] } = $props();
+  let { pals, players, ongoto }: {
+    pals: Pal[]; players: Player[]; ongoto?: (targetId: string) => void;
+  } = $props();
+
+  let selected = $state<Pal | null>(null);
+
+  // dev-only: ?detail=<speciesId> opens the detail modal for screenshot tests
+  $effect(() => {
+    if (!import.meta.env.DEV) return;
+    const d = new URLSearchParams(location.search).get('detail');
+    if (d && !selected) {
+      selected = pals.find(p => p.species.toLowerCase().includes(d.toLowerCase())) ?? null;
+    }
+  });
 
   let search = $state('');
   let fWhere = $state('');
@@ -107,7 +121,7 @@
     </thead>
     <tbody>
       {#each rows as p (p.key.instanceId)}
-        <tr>
+        <tr class="palrow" onclick={() => (selected = p)} title="Show details & potential mates">
           <td title={p.characterId} class="speciescell">
             {#if speciesIcon(p.species)}
               <img class="palicon" src={speciesIcon(p.species)} alt="" loading="lazy" />
@@ -143,6 +157,11 @@
   </table>
 </div>
 
+{#if selected}
+  <PalDetail pal={selected} {pals} {players} onclose={() => (selected = null)}
+             ongoto={(id) => { selected = null; ongoto?.(id); }} />
+{/if}
+
 <style>
   .controls {
     display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
@@ -156,6 +175,7 @@
     border-radius: var(--radius);
     flex: 1; min-height: 0; /* fill remaining viewport; scroll inside */
   }
+  .palrow { cursor: pointer; }
   .nick { color: var(--accent2); }
   .gender-m { color: var(--accent); }
   .gender-f { color: #f78ab0; }
