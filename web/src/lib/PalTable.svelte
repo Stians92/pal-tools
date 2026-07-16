@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Pal, Player } from './paltools';
-  import { speciesName, passiveName, speciesIcon } from './breeding';
+  import { speciesName, passiveName, speciesIcon, sortPassivesByRank } from './breeding';
+  import Passive from './Passive.svelte';
 
   let { pals, players }: { pals: Pal[]; players: Player[] } = $props();
 
@@ -22,7 +23,8 @@
   }
 
   const owners = $derived([...new Set(pals.map(p => p.ownerUid).filter((x): x is string => !!x))]);
-  const allPassives = $derived([...new Set(pals.flatMap(p => p.passives))].sort());
+  const allPassives = $derived([...new Set(pals.flatMap(p => p.passives))]
+    .sort((a, b) => passiveName(a).localeCompare(passiveName(b))));
 
   function sortVal(p: Pal, k: string): string | number {
     if (k === 'souls') return souls(p);
@@ -131,7 +133,9 @@
             </td>
           {/each}
           <td class="num">{souls(p) || ''}</td>
-          <td class="muted" title={p.passives.join(', ')}>{p.passives.map(passiveName).join(', ')}</td>
+          <td title={p.passives.join(', ')}>
+            {#each sortPassivesByRank(p.passives) as ps, i}{#if i}<span class="pvsep">,</span>{/if}<Passive id={ps} />{/each}
+          </td>
           <td class="muted">{ownerName(p.ownerUid)}</td>
         </tr>
       {/each}

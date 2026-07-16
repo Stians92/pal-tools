@@ -2,8 +2,10 @@
   import type { Pal, Player } from './paltools';
   import {
     allSpecies, allPassives, speciesName, passiveName, palSpeciesId, speciesIcon,
+    passiveTier, sortPassivesByRank,
     findPairs, planBreeding, type BreedingPair, type BreedingPlan,
   } from './breeding';
+  import Passive from './Passive.svelte';
 
   let { pals, players, targetId = $bindable(new URLSearchParams(location.search).get('target') ?? '') }:
     { pals: Pal[]; players: Player[]; targetId?: string } = $props();
@@ -28,7 +30,7 @@
     return allPassives
       .filter(p => present.has(p.id.toLowerCase()))
       .filter(p => !passiveQuery || p.name.toLowerCase().includes(passiveQuery.toLowerCase()))
-      .sort((a, b) => a.name.localeCompare(b.name));
+      .sort((a, b) => b.rank - a.rank || a.name.localeCompare(b.name));
   });
 
   const pairs = $derived.by((): BreedingPair[] =>
@@ -74,7 +76,7 @@
       {#each boxPassives as p (p.id)}
         <button class="chip" class:sel={desired.includes(p.id)} title={p.desc ?? ''}
                 onclick={() => togglePassive(p.id)}>
-          {p.name}
+          <span class="pv {passiveTier(p.id)}">{p.name}</span>
         </button>
       {/each}
     </div>
@@ -116,7 +118,10 @@
                   <img class="palicon sm" src={speciesIcon(palSpeciesId(pair.mother))} alt="" loading="lazy" />
                   {palLabel(pair.mother)}
                 </td>
-                <td class="muted small">{pair.pool.map(passiveName).join(', ') || '—'}</td>
+                <td class="small">
+                  {#each sortPassivesByRank(pair.pool) as ps, i}{#if i}<span class="pvsep">,</span>{/if}<Passive id={ps} />{/each}
+                  {#if !pair.pool.length}<span class="muted">—</span>{/if}
+                </td>
                 <td class="num">
                   {#if desired.length}
                     <span class:good={pair.probability >= 0.2}>{pct(pair.probability)}</span><span
@@ -184,6 +189,7 @@
   .chip:hover { color: var(--text); }
   .chip.owned { border-color: var(--good); }
   .chip.sel { background: var(--accent); color: #fff; border-color: transparent; }
+  .chip.sel .pv { color: inherit; font-weight: inherit; }
   .results h3 { margin-top: 0; }
   .tablewrap {
     overflow: auto; border: 1px solid var(--border);
