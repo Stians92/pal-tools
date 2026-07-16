@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>paltools-browser-test</title></head>
+<body>
+<div id="result">RUNNING</div>
+<script src="/src/oodle.js"></script>
+<script src="/src/gvas.js"></script>
+<script src="/src/savefile.js"></script>
+<script src="/src/pals.js"></script>
+<script>
+(async () => {
+  const el = document.getElementById('result');
+  try {
+    const dir = '/45E8042741E6A1DEDCEF279A008D4C6B';
+    const levelBytes = new Uint8Array(await (await fetch(dir + '/Level.sav')).arrayBuffer());
+    const gvasBytes = PalTools.decompressSav(levelBytes);
+    const world = PalTools.extractWorld(PalTools.parseLevelSav(gvasBytes));
+    const p1 = new Uint8Array(await (await fetch(dir + '/Players/36C462BC000000000000000000000000.sav')).arrayBuffer());
+    const meta = PalTools.extractPlayerMeta(PalTools.parsePlayerSav(PalTools.decompressSav(p1)));
+    PalTools.classifyPals(world, [meta]);
+    const inBox = world.pals.filter(p => p.where === 'palbox').length;
+    el.textContent = `BROWSER_TEST_OK pals=${world.pals.length} players=${world.players.length} palbox=${inBox}`;
+  } catch (e) {
+    el.textContent = 'BROWSER_TEST_FAIL ' + e.message + '\n' + e.stack;
+  }
+})();
+</script>
+</body></html>

@@ -1,0 +1,151 @@
+// Typed facade over the from-scratch save parser (../../src/*.js).
+// Those files are dependency-free classic scripts that register a global
+// `PalTools` object when no CommonJS `module` is present; we import them for
+// their side effects and re-export a typed API.
+
+import '../../../src/oodle.js';
+import '../../../src/gvas.js';
+import '../../../src/savefile.js';
+import '../../../src/pals.js';
+
+export interface PalKey {
+  playerUid: string;
+  instanceId: string;
+}
+
+export interface Pal {
+  key: PalKey;
+  groupId: string | null;
+  nickname: string | null;
+  level: number;
+  exp: number;
+  characterId: string;
+  /** characterId with BOSS_/PREDATOR_ prefix stripped */
+  species: string;
+  isAlpha: boolean;
+  isLucky: boolean;
+  gender: 'Male' | 'Female' | null;
+  rank: number;
+  rankHp: number;
+  rankAttack: number;
+  rankDefence: number;
+  rankCraftSpeed: number;
+  talentHp: number;
+  talentMelee: number;
+  talentShot: number;
+  talentDefense: number;
+  passives: string[];
+  equipWaza: string[];
+  masteredWaza: string[];
+  hp: number | null;
+  ownerUid: string | null;
+  containerId: string | null;
+  slotIndex: number;
+  friendship: number;
+  /** set by classifyPals */
+  where?: 'palbox' | 'party' | 'base/other' | 'unknown';
+}
+
+export interface Player {
+  key: PalKey;
+  uid: string;
+  nickname: string | null;
+  level: number;
+  exp: number;
+  groupId: string | null;
+}
+
+export interface WorldData {
+  players: Player[];
+  pals: Pal[];
+  containers: Map<string, { id: string; slotNum: number; slots: unknown[] }>;
+  guilds: { id: string; groupType: string | null }[];
+}
+
+export interface PlayerMeta {
+  playerUid: string | null;
+  instanceId: string | null;
+  palboxContainerId: string | null;
+  partyContainerId: string | null;
+  inventory: unknown;
+  /** 32-hex instance ids of collected relics/effigies (typed + legacy union) */
+  collectedRelics: string[];
+  /** 32-hex guids of unlocked fast travel points */
+  unlockedFastTravel: string[];
+  /** defeated field/alpha boss spawner ids (lowercase) */
+  defeatedBosses: string[];
+  defeatedTowers: string[];
+  collectedNotes: string[];
+}
+
+interface PalToolsGlobal {
+  decompressSav(bytes: Uint8Array): Uint8Array;
+  parseLevelSav(gvasBytes: Uint8Array): unknown;
+  parsePlayerSav(gvasBytes: Uint8Array): unknown;
+  extractWorld(parsed: unknown): WorldData;
+  extractPlayerMeta(parsed: unknown): PlayerMeta;
+  classifyPals(world: WorldData, metas: PlayerMeta[]): WorldData;
+}
+
+const PT = (globalThis as unknown as { PalTools: PalToolsGlobal }).PalTools;
+
+export const decompressSav = (b: Uint8Array) => PT.decompressSav(b);
+export const parseLevelSav = (b: Uint8Array) => PT.parseLevelSav(b);
+export const parsePlayerSav = (b: Uint8Array) => PT.parsePlayerSav(b);
+export const extractWorld = (p: unknown) => PT.extractWorld(p);
+export const extractPlayerMeta = (p: unknown) => PT.extractPlayerMeta(p);
+export const classifyPals = (w: WorldData, m: PlayerMeta[]) => PT.classifyPals(w, m);
+
+export interface LoadedSave {
+  world: WorldData;
+  metas: PlayerMeta[];
+  /** directory (within the drop) the loaded Level.sav came from */
+  loadedFrom: string;
+  /** number of distinct non-backup worlds found in the drop */
+  worldCount: number;
+}
+
+/**
+ * Load a full save from browser File objects. The drop may be a world folder,
+ * or a parent folder containing several worlds and `backup/` snapshots — pick
+ * the most recently modified non-backup world and scope Players/ to it.
+ */
+export async function loadSaveFiles(files: { path: string; file: File }[]): Promise<LoadedSave> {
+  const candidates = files.filter(f => /(^|\/)Level\.sav$/i.test(f.path));
+  if (!candidates.length) throw new Error('No Level.sav found in the selection');
+
+  const isBackup = (p: string) => /(^|\/)backup\//i.test(p);
+  const live = candidates.filter(f => !isBackup(f.path));
+  const pool = live.length ? live : candidates; // all-backup drop: use backups
+  pool.sort((a, b) => (b.file.lastModified || 0) - (a.file.lastModified || 0));
+  const level = pool[0];
+  const baseDir = level.path.replace(/Level\.sav$/i, ''); // '' or 'World/…/'
+
+  const playerFiles = files.filter(f =>
+    f.path.startsWith(baseDir) &&
+    new RegExp('^' + escapeRegExp(baseDir) + 'Players/[0-9A-F]+\\.sav$', 'i').test(f.path));
+
+  const levelBytes = new Uint8Array(await level.file.arrayBuffer());
+  const world = extractWorld(parseLevelSav(decompressSav(levelBytes)));
+
+  const metas: PlayerMeta[] = [];
+  for (const pf of playerFiles) {
+    try {
+      const bytes = new Uint8Array(await pf.file.arrayBuffer());
+      metas.push(extractPlayerMeta(parsePlayerSav(decompressSav(bytes))));
+    } catch (e) {
+      console.warn('player parse failed:', pf.path, e);
+    }
+  }
+  classifyPals(world, metas);
+  return {
+    world,
+    metas,
+    loadedFrom: baseDir.replace(/\/$/, '') || '(dropped files)',
+    worldCount: new Set(live.map(f => f.path.replace(/Level\.sav$/i, ''))).size || 1,
+  };
+}
+
+function escapeRegExp(s: string): string {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
