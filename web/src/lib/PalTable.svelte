@@ -134,7 +134,7 @@
           {/each}
           <td class="num">{souls(p) || ''}</td>
           <td title={p.passives.join(', ')}>
-            {#each sortPassivesByRank(p.passives) as ps, i}{#if i}<span class="pvsep">,</span>{/if}<Passive id={ps} />{/each}
+            {#each sortPassivesByRank(p.passives) as ps (ps)}<Passive id={ps} />{/each}
           </td>
           <td class="muted">{ownerName(p.ownerUid)}</td>
         </tr>

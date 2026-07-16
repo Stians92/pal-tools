@@ -39,11 +39,6 @@ export const passiveById = (id: string): PassiveInfo | undefined => passiveByIdL
 export const passiveName = (id: string): string => passiveById(id)?.name ?? id;
 /** In-game rarity rank of a passive: negative = debuff, 1–4 = tiers (Legend = 4). */
 export const passiveRank = (id: string): number => passiveById(id)?.rank ?? 1;
-/** CSS tier class matching the in-game rarity colors. */
-export const passiveTier = (id: string): string => {
-  const r = passiveRank(id);
-  return r < 0 ? 'pv-n' : r < 2 ? 'pv-1' : r < 3 ? 'pv-2' : r < 4 ? 'pv-3' : 'pv-4';
-};
 /** Best passives first (rank desc, then name) — for display. */
 export const sortPassivesByRank = (ids: string[]): string[] =>
   [...ids].sort((a, b) => passiveRank(b) - passiveRank(a) || passiveName(a).localeCompare(passiveName(b)));

@@ -2,7 +2,7 @@
   import type { Pal, Player } from './paltools';
   import {
     allSpecies, allPassives, speciesName, passiveName, palSpeciesId, speciesIcon,
-    passiveTier, sortPassivesByRank,
+    sortPassivesByRank,
     findPairs, planBreeding, type BreedingPair, type BreedingPlan,
   } from './breeding';
   import Passive from './Passive.svelte';
@@ -74,9 +74,9 @@
     <input type="search" placeholder="Filter passives…" bind:value={passiveQuery} />
     <div class="chips">
       {#each boxPassives as p (p.id)}
-        <button class="chip" class:sel={desired.includes(p.id)} title={p.desc ?? ''}
+        <button class="pvbtn" class:sel={desired.includes(p.id)} title={p.desc ?? ''}
                 onclick={() => togglePassive(p.id)}>
-          <span class="pv {passiveTier(p.id)}">{p.name}</span>
+          <Passive id={p.id} />
         </button>
       {/each}
     </div>
@@ -119,7 +119,7 @@
                   {palLabel(pair.mother)}
                 </td>
                 <td class="small">
-                  {#each sortPassivesByRank(pair.pool) as ps, i}{#if i}<span class="pvsep">,</span>{/if}<Passive id={ps} />{/each}
+                  {#each sortPassivesByRank(pair.pool) as ps (ps)}<Passive id={ps} />{/each}
                   {#if !pair.pool.length}<span class="muted">—</span>{/if}
                 </td>
                 <td class="num">
@@ -189,7 +189,10 @@
   .chip:hover { color: var(--text); }
   .chip.owned { border-color: var(--good); }
   .chip.sel { background: var(--accent); color: #fff; border-color: transparent; }
-  .chip.sel .pv { color: inherit; font-weight: inherit; }
+  .pvbtn { background: none; border: none; padding: 0; border-radius: 6px; }
+  .pvbtn :global(.pv) { margin: 0; cursor: pointer; }
+  .pvbtn:hover :global(.pv) { filter: brightness(1.18); }
+  .pvbtn.sel { outline: 2px solid var(--accent); outline-offset: 1px; }
   .results h3 { margin-top: 0; }
   .tablewrap {
     overflow: auto; border: 1px solid var(--border);

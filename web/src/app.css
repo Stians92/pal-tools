@@ -106,19 +106,6 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 .tag.party { background: #1c4a70; color: #cfe8ff; }
 .tag.base { background: #2e5431; color: #d3f0d6; }
 
-/* passive rarity, matching the in-game tier colors:
-   negative = red, tier 1 = plain, 2 = yellow, 3 = orange, 4 (Legend…) = gold */
-.pv { white-space: nowrap; }
-.pvsep { color: var(--muted); margin-right: 4px; }
-.pv.pv-n { color: var(--bad); }
-.pv.pv-1 { color: var(--text-2); }
-.pv.pv-2 { color: #e0c46a; }
-.pv.pv-3 { color: #f0a75c; }
-.pv.pv-4 { color: #ffd257; font-weight: 600; }
-:root[data-theme="light"] .pv.pv-2 { color: #91700a; }
-:root[data-theme="light"] .pv.pv-3 { color: #b05e14; }
-:root[data-theme="light"] .pv.pv-4 { color: #a8730a; }
-
 .palicon {
   width: 26px; height: 26px; border-radius: 50%; object-fit: cover;
   vertical-align: middle; background: var(--panel2); flex: none;
