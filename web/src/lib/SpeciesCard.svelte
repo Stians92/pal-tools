@@ -20,6 +20,15 @@
   const WORK_LABEL: Record<string, string> = {
     GenerateElectricity: 'Electricity', MedicineProduction: 'Medicine',
   };
+  // in-game element colors
+  const EL_COLOR: Record<string, string> = {
+    Neutral: '#9aa3ae', Fire: '#e8703f', Water: '#4a9be8', Grass: '#6cb856',
+    Electric: '#e0bb3a', Ice: '#6fc8d8', Ground: '#c08a45', Dark: '#b0589e', Dragon: '#8a63e8',
+  };
+  const EL_ICON: Record<string, string> = {
+    Neutral: '◯', Fire: '🔥', Water: '💧', Grass: '🌿',
+    Electric: '⚡', Ice: '❄️', Ground: '⛰️', Dark: '🌑', Dragon: '🐉',
+  };
 </script>
 
 <script lang="ts">
@@ -50,6 +59,12 @@
         </div>
       </div>
     {/if}
+
+    <div class="els">
+      {#each sp.els as el}
+        <span class="el" style="--elc:{EL_COLOR[el] ?? 'var(--muted)'}">{EL_ICON[el] ?? ''} {el}</span>
+      {/each}
+    </div>
 
     <h4>Species stats</h4>
     <div class="stats">
@@ -110,6 +125,15 @@
   :global([data-theme='light']) .badge.rare { color: #1a73c7; border-color: #9cc4e8; }
   :global([data-theme='light']) .badge.epic { color: #7d5bbf; border-color: #c9b5ee; }
   :global([data-theme='light']) .badge.legendary { color: #a8730a; border-color: #dcc189; }
+
+  .els { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+  .el {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 2px 11px; border-radius: 20px; font-size: 12px; font-weight: 600;
+    color: var(--elc);
+    background: color-mix(in srgb, var(--elc) 13%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--elc) 40%, transparent);
+  }
 
   h4 { font-size: 12.5px; margin: 12px 0 7px; color: var(--text); }
   .stats { display: flex; flex-direction: column; gap: 5px; }

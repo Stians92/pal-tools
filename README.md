@@ -8,7 +8,8 @@ Palworld **palbox viewer + breeding calculator** web app.
 - Breeding data is the **1.0-rebalanced** dataset vendored from
   [tylercamp/palcalc](https://github.com/tylercamp/palcalc) (MIT, extracted
   from current game files). Pre-1.0 breeding tables give wrong offspring.
-- Map data: relics/fast-travel/bosses from
+- Map data: relics/fast-travel/bosses — and per-species element types
+  (`data/vendor/psp_pals.json`) — from
   [oMaN-Rod/palworld-save-pal](https://github.com/oMaN-Rod/palworld-save-pal)
   (MIT, GUID-keyed 1.0 level actors); chests/eggs/fruits/journals/materials/
   NPCs/supply/fishing courtesy of [paldb.cc](https://paldb.cc) map data

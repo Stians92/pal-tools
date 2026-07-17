@@ -16,6 +16,15 @@ const path = require('path');
 const vendor = path.join(__dirname, '..', 'data', 'vendor');
 const db = JSON.parse(fs.readFileSync(path.join(vendor, 'palcalc_db.json'), 'utf8'));
 const breeding = JSON.parse(fs.readFileSync(path.join(vendor, 'palcalc_breeding.json'), 'utf8'));
+// element types per species (palcalc's db has none) — from oMaN-Rod/palworld-save-pal (MIT)
+const pspPals = JSON.parse(fs.readFileSync(path.join(vendor, 'psp_pals.json'), 'utf8'));
+const pspByLower = new Map(Object.keys(pspPals).map(k => [k.toLowerCase(), pspPals[k]]));
+const EL_NAME = { Normal: 'Neutral', Leaf: 'Grass', Earth: 'Ground', Electricity: 'Electric' };
+function elementsOf(internalName) {
+  const els = pspByLower.get(internalName.toLowerCase())?.element_types;
+  if (!els || !els.length) { console.warn(`no element types for ${internalName}`); return []; }
+  return els.map(e => EL_NAME[e] ?? e);
+}
 
 // --- species table ---
 const species = db.Pals.map(p => ({
@@ -28,6 +37,7 @@ const species = db.Pals.map(p => ({
   male: db.BreedingGenderProbability[p.InternalName]?.MALE ?? 0.5,
   guaranteed: p.GuaranteedPassivesInternalIds || [],
   // species stats for the detail view
+  els: elementsOf(p.InternalName),
   rarity: p.Rarity,
   size: p.Size,
   nocturnal: p.Nocturnal,

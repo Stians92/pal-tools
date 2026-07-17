@@ -13,6 +13,7 @@ export interface Species {
   prio: number;
   male: number;
   guaranteed: string[];
+  els: string[];
   rarity: number;
   size: string;
   nocturnal: boolean;
