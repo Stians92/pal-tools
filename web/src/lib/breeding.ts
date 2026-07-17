@@ -314,48 +314,17 @@ export function routeFor(reach: Reachability, targetId: string): BreedingStep[] 
 }
 
 /**
- * Species-level BFS: starting from owned species, which species are reachable
- * by repeated breeding, and via which minimal-step plan. Assumes any bred
- * species can later be obtained in both genders.
+ * Minimal-breed plan for a target from the owned set. Delegates to the same
+ * cost-relaxation engine as the Coverage tab (`reachabilityMap`/`routeFor`) so
+ * both views always agree on the route and its length. Returns null if the
+ * target is unreachable; an empty step list means it's already owned.
  */
-export function planBreeding(ownedSpeciesIds: string[], targetId: string, maxDepth = 6): BreedingPlan | null {
-  const owned = new Set(ownedSpeciesIds.map(s => s.toLowerCase()).filter(s => byIdLower.has(s)));
-  const target = targetId.toLowerCase();
-  if (owned.has(target)) return { steps: [], target: speciesById(targetId)!.id };
-
-  // BFS over "known set" frontier — track how each new species was first made
-  const madeBy = new Map<string, [string, string]>();
-  let frontier = [...owned];
-  const known = new Set(owned);
-
-  for (let depth = 0; depth < maxDepth && frontier.length; depth++) {
-    const next: string[] = [];
-    const knownArr = [...known];
-    for (const a of frontier) {
-      for (const b of knownArr) {
-        const child = childOf(a, b);
-        if (!child) continue;
-        const cl = child.toLowerCase();
-        if (!known.has(cl)) {
-          known.add(cl);
-          madeBy.set(cl, [a, b]);
-          next.push(cl);
-          if (cl === target) {
-            // reconstruct plan
-            const steps: BreedingStep[] = [];
-            const build = (id: string) => {
-              const rec = madeBy.get(id);
-              if (!rec) return;
-              build(rec[0]); build(rec[1]);
-              steps.push({ parentA: byIdLower.get(rec[0])!.id, parentB: byIdLower.get(rec[1])!.id, child: byIdLower.get(id)!.id });
-            };
-            build(target);
-            return { steps, target: byIdLower.get(target)!.id };
-          }
-        }
-      }
-    }
-    frontier = next;
-  }
-  return null;
+export function planBreeding(ownedSpeciesIds: string[], targetId: string): BreedingPlan | null {
+  const s = speciesById(targetId);
+  if (!s) return null;
+  if (ownedSpeciesIds.some(o => o.toLowerCase() === s.id.toLowerCase()))
+    return { steps: [], target: s.id };
+  const reach = reachabilityMap(ownedSpeciesIds);
+  if (!reach.depth.has(s.id)) return null;
+  return { steps: routeFor(reach, s.id), target: s.id };
 }

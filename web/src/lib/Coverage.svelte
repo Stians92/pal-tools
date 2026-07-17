@@ -18,6 +18,17 @@
 
   const reach = $derived.by((): Reachability => reachabilityMap(ownedIds));
 
+  // Actual number of breeds to perform for each species = length of the deduped
+  // route (an intermediate shared by both parents is bred once). This is the
+  // canonical count, matching the route shown here and in the breeding planner;
+  // reach.depth is a cost that can double-count shared prerequisites.
+  const stepsById = $derived.by((): Map<string, number> => {
+    const m = new Map<string, number>();
+    for (const id of reach.depth.keys())
+      m.set(id, reach.depth.get(id) === 0 ? 0 : routeFor(reach, id).length);
+    return m;
+  });
+
   interface Tier { depth: number; label: string; items: { id: string; name: string; dex: number }[] }
 
   const tiers = $derived.by((): Tier[] => {
@@ -26,7 +37,7 @@
     const unreachable: Tier['items'] = [];
     for (const s of allSpecies) {
       if (q && !s.name.toLowerCase().includes(q) && !s.id.toLowerCase().includes(q)) continue;
-      const d = reach.depth.get(s.id);
+      const d = stepsById.get(s.id);
       const item = { id: s.id, name: s.name, dex: s.dex };
       if (d === undefined) unreachable.push(item);
       else {
