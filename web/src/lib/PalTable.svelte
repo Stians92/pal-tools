@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { Pal, Player } from './paltools';
-  import { speciesName, passiveName, speciesIcon, sortPassivesByRank } from './breeding';
+  import { speciesName, passiveName, speciesIcon, speciesById, sortPassivesByRank } from './breeding';
+  import { EL_COLOR, EL_ICON } from './elements';
   import Passive from './Passive.svelte';
   import PalDetail from './PalDetail.svelte';
 
@@ -40,8 +41,11 @@
   const allPassives = $derived([...new Set(pals.flatMap(p => p.passives))]
     .sort((a, b) => passiveName(a).localeCompare(passiveName(b))));
 
+  const elementsOf = (p: Pal): string[] => speciesById(p.species)?.els ?? [];
+
   function sortVal(p: Pal, k: string): string | number {
     if (k === 'souls') return souls(p);
+    if (k === 'els') return elementsOf(p).join(' ');
     if (k === 'owner') return ownerName(p.ownerUid);
     if (k === 'passives') return p.passives.length;
     const v = (p as unknown as Record<string, unknown>)[k];
@@ -79,7 +83,8 @@
   }
 
   const cols: [string, string, boolean][] = [
-    ['species', 'Species', false], ['nickname', 'Nickname', false], ['level', 'Lv', true],
+    ['species', 'Species', false], ['els', 'Type', false],
+    ['nickname', 'Nickname', false], ['level', 'Lv', true],
     ['gender', 'Sex', false], ['where', 'Location', false], ['rank', 'Rank', true],
     ['talentHp', 'IV HP', true], ['talentShot', 'IV Atk', true], ['talentDefense', 'IV Def', true],
     ['souls', 'Souls', true], ['passives', 'Passives', false], ['owner', 'Owner', false],
@@ -130,6 +135,11 @@
             {#if p.isAlpha}<span class="tag alpha">α</span>{/if}
             {#if p.isLucky}<span class="tag lucky">✦</span>{/if}
           </td>
+          <td class="elcell">
+            {#each elementsOf(p) as el}
+              <span class="elmini" style="--elc:{EL_COLOR[el] ?? 'var(--muted)'}" title={el}>{EL_ICON[el] ?? ''}<span class="ellabel">{el}</span></span>
+            {/each}
+          </td>
           <td class="nick">{p.nickname ?? ''}</td>
           <td class="num">{p.level}</td>
           <td class={p.gender === 'Male' ? 'gender-m' : p.gender === 'Female' ? 'gender-f' : 'muted'}>
@@ -176,6 +186,16 @@
     flex: 1; min-height: 0; /* fill remaining viewport; scroll inside */
   }
   .palrow { cursor: pointer; }
+  .elcell { white-space: nowrap; }
+  .elmini {
+    display: inline-flex; align-items: center; gap: 4px;
+    padding: 1px 8px; border-radius: 20px; font-size: 11px; font-weight: 600;
+    color: var(--elc);
+    background: color-mix(in srgb, var(--elc) 13%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--elc) 38%, transparent);
+    margin-right: 4px;
+  }
+  @media (max-width: 1250px) { .ellabel { display: none; } .elmini { padding: 1px 6px; } }
   .nick { color: var(--accent2); }
   .gender-m { color: var(--accent); }
   .gender-f { color: #f78ab0; }
