@@ -21,6 +21,12 @@
     GenerateElectricity: 'Electricity', MedicineProduction: 'Medicine',
   };
   import { EL_COLOR, EL_ICON } from './elements';
+
+  const GEAR_ICON: Record<string, string> = {
+    Saddle: '🐎', Harness: '🪂', Gloves: '🧤', Choker: '📿', Headband: '🎽',
+    SMG: '🔫', Shotgun: '🔫', Minigun: '🔫', 'Assault rifle': '🔫',
+    'Grenade launcher': '💣', 'Missile launcher': '🚀', Launcher: '🚀', Hammer: '🔨',
+  };
 </script>
 
 <script lang="ts">
@@ -56,6 +62,11 @@
       {#each sp.els as el}
         <span class="el" style="--elc:{EL_COLOR[el] ?? 'var(--muted)'}">{EL_ICON[el] ?? ''} {el}</span>
       {/each}
+      {#if sp.gear}
+        <span class="gear" title="Partner gear technology unlock">
+          {GEAR_ICON[sp.gear.kind] ?? '🛠'} {sp.gear.kind} <b>Lv {sp.gear.lvl}</b>
+        </span>
+      {/if}
     </div>
 
     <h4>Species stats</h4>
@@ -126,6 +137,15 @@
     background: color-mix(in srgb, var(--elc) 13%, transparent);
     box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--elc) 40%, transparent);
   }
+
+  .gear {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 2px 11px; border-radius: 20px; font-size: 12px;
+    color: var(--text-2);
+    background: var(--panel2);
+    box-shadow: inset 0 0 0 1px var(--border);
+  }
+  .gear b { color: var(--text); font-weight: 600; }
 
   h4 { font-size: 12.5px; margin: 12px 0 7px; color: var(--text); }
   .stats { display: flex; flex-direction: column; gap: 5px; }

@@ -26,6 +26,29 @@ function elementsOf(internalName) {
   return els.map(e => EL_NAME[e] ?? e);
 }
 
+// partner gear (saddles etc.): tech `SkillUnlock_<InternalName>` gives the
+// unlock level; the matching item's icon name encodes the gear kind
+const pspTech = JSON.parse(fs.readFileSync(path.join(vendor, 'psp_technologies.json'), 'utf8'));
+const pspItems = JSON.parse(fs.readFileSync(path.join(vendor, 'psp_items.json'), 'utf8'));
+const techByLower = new Map(Object.keys(pspTech).map(k => [k.toLowerCase(), pspTech[k]]));
+const itemByLower = new Map(Object.keys(pspItems).map(k => [k.toLowerCase(), pspItems[k]]));
+const GEAR_KIND = {
+  saddle: 'Saddle', harness: 'Harness', gloves: 'Gloves', choker: 'Choker',
+  headband: 'Headband', shotgun: 'Shotgun', smg: 'SMG', minigun: 'Minigun',
+  grenadelauncher: 'Grenade launcher', multimissile: 'Missile launcher',
+  assaultrifle: 'Assault rifle', launcher: 'Launcher', hammer: 'Hammer',
+};
+let gearCount = 0;
+function gearOf(internalName) {
+  const key = ('SkillUnlock_' + internalName).toLowerCase();
+  const tech = techByLower.get(key);
+  if (!tech) return null;
+  const icon = itemByLower.get(key)?.icon ?? '';
+  const kind = GEAR_KIND[icon.replace('t_itemicon_essential_skillunlock_', '')] ?? 'Gear';
+  gearCount++;
+  return { kind, lvl: tech.level_cap };
+}
+
 // --- species table ---
 const species = db.Pals.map(p => ({
   id: p.InternalName,
@@ -38,6 +61,7 @@ const species = db.Pals.map(p => ({
   guaranteed: p.GuaranteedPassivesInternalIds || [],
   // species stats for the detail view
   els: elementsOf(p.InternalName),
+  gear: gearOf(p.InternalName),
   rarity: p.Rarity,
   size: p.Size,
   nocturnal: p.Nocturnal,

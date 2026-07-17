@@ -14,6 +14,8 @@ export interface Species {
   male: number;
   guaranteed: string[];
   els: string[];
+  /** partner gear (saddle etc.) tech unlock, null if the species has none */
+  gear: { kind: string; lvl: number } | null;
   rarity: number;
   size: string;
   nocturnal: boolean;
