@@ -2,9 +2,10 @@
   import type { Pal, Player } from './paltools';
   import {
     speciesById, speciesName, speciesIcon, palSpeciesId, matesFor,
-    sortPassivesByRank, allSpecies, type Gender,
+    sortPassivesByRank, rarityInfo, type Gender,
   } from './breeding';
   import Passive from './Passive.svelte';
+  import SpeciesCard from './SpeciesCard.svelte';
 
   let { pal, pals, players, onclose, ongoto }: {
     pal: Pal; pals: Pal[]; players: Player[];
@@ -21,35 +22,7 @@
   const ownerName = (uid: string | null) =>
     uid ? players.find(pl => pl.uid === uid)?.nickname ?? uid.slice(0, 8) : '—';
 
-  const rarity = $derived.by(() => {
-    const r = sp?.rarity ?? 0;
-    return r >= 10 ? { label: `${r} Legendary`, cls: 'legendary' }
-      : r >= 8 ? { label: `${r} Epic`, cls: 'epic' }
-      : r >= 5 ? { label: `${r} Rare`, cls: 'rare' }
-      : { label: `${r} Common`, cls: 'common' };
-  });
-
-  // bar scaling: max of each stat across all species
-  type StatKey = keyof typeof allSpecies[0]['stats'];
-  const statMax: Record<string, number> = {};
-  for (const s of allSpecies) {
-    for (const [k, v] of Object.entries(s.stats)) statMax[k] = Math.max(statMax[k] ?? 0, v);
-  }
-  statMax.price = Math.max(...allSpecies.map(s => s.price));
-  const STAT_ROWS: [string, string][] = [
-    ['hp', 'HP'], ['atk', 'Attack'], ['def', 'Defense'],
-    ['stamina', 'Stamina'], ['run', 'Running speed'], ['sprint', 'Sprinting speed'],
-  ];
-  const statVal = (k: string): number => k === 'price' ? sp?.price ?? 0 : (sp?.stats as any)?.[k] ?? 0;
-
-  const WORK_ICON: Record<string, string> = {
-    Kindling: '🔥', Watering: '💧', Planting: '🌱', GenerateElectricity: '⚡',
-    Handiwork: '🛠️', Gathering: '🧺', Lumbering: '🪓', Mining: '⛏️',
-    MedicineProduction: '💊', Cooling: '❄️', Transporting: '📦', Farming: '🧑‍🌾',
-  };
-  const WORK_LABEL: Record<string, string> = {
-    GenerateElectricity: 'Electricity', MedicineProduction: 'Medicine',
-  };
+  const rarity = $derived(rarityInfo(sp?.rarity ?? 0));
 
   let mateQuery = $state('');
   let ownedOnly = $state(false);
@@ -136,35 +109,7 @@
         {/if}
 
         {#if sp}
-          <h3>Species stats</h3>
-          <div class="stats">
-            {#each STAT_ROWS as [k, label]}
-              <div class="srow">
-                <span class="sl">{label}</span>
-                <span class="sbar"><i style="width:{Math.round(statVal(k) / (statMax[k] || 1) * 100)}%"></i></span>
-                <span class="sv">{statVal(k)}</span>
-              </div>
-            {/each}
-            <div class="srow">
-              <span class="sl">Price</span>
-              <span class="sbar"><i style="width:{Math.round(sp.price / statMax.price * 100)}%"></i></span>
-              <span class="sv">{sp.price}</span>
-            </div>
-            <div class="srow">
-              <span class="sl">Food</span>
-              <span class="sbar food">{'🍗'.repeat(Math.min(sp.stats.food, 9))}</span>
-              <span class="sv">{sp.stats.food}</span>
-            </div>
-          </div>
-
-          {#if Object.keys(sp.work).length}
-            <h3>Work suitability</h3>
-            <div class="work">
-              {#each Object.entries(sp.work) as [w, lv]}
-                <span class="wchip">{WORK_ICON[w] ?? ''} {WORK_LABEL[w] ?? w} <b>Lv {lv}</b></span>
-              {/each}
-            </div>
-          {/if}
+          <SpeciesCard speciesId={sp.id} header={false} />
         {/if}
       </div>
 
@@ -267,21 +212,6 @@
   .fact { display: flex; justify-content: space-between; font-size: 12.5px; padding: 3px 0; border-bottom: 1px solid var(--border-soft); }
   .fact .k { color: var(--muted); }
   .pvrow { display: flex; flex-wrap: wrap; margin-top: 6px; }
-
-  .stats { display: flex; flex-direction: column; gap: 5px; }
-  .srow { display: grid; grid-template-columns: 105px 1fr 48px; align-items: center; gap: 8px; font-size: 12.5px; }
-  .sl { color: var(--text-2); }
-  .sv { text-align: right; font-variant-numeric: tabular-nums; }
-  .sbar { height: 6px; border-radius: 3px; background: var(--meter-track); overflow: hidden; }
-  .sbar > i { display: block; height: 100%; background: var(--accent); border-radius: 3px; }
-  .sbar.food { background: none; height: auto; font-size: 11px; letter-spacing: 1px; }
-
-  .work { display: flex; flex-wrap: wrap; gap: 6px; }
-  .wchip {
-    background: var(--panel2); border: 1px solid var(--border-soft); border-radius: 8px;
-    padding: 3px 10px; font-size: 12px; color: var(--text-2);
-  }
-  .wchip b { color: var(--text); font-weight: 600; }
 
   .matefilters { display: flex; gap: 12px; align-items: center; flex: none; margin-bottom: 8px; }
   .matefilters input[type='search'] { flex: 1; min-width: 120px; }

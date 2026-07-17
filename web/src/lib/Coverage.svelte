@@ -4,12 +4,14 @@
     allSpecies, speciesName, palSpeciesId, speciesIcon, reachabilityMap, routeFor,
     type Reachability,
   } from './breeding';
+  import SpeciesCard from './SpeciesCard.svelte';
 
   let { pals, ongoto }: { pals: Pal[]; ongoto: (targetId: string) => void } = $props();
 
   let search = $state('');
   let showOwned = $state(false);
-  let selected = $state('');
+  let selected = $state(
+    import.meta.env.DEV ? new URLSearchParams(location.search).get('sel') ?? '' : '');
 
   const breedable = $derived(pals.filter(p => p.gender === 'Male' || p.gender === 'Female'));
   const ownedIds = $derived([...new Set(breedable.map(p => palSpeciesId(p)))]);
@@ -101,32 +103,39 @@
       </div>
       {#if selected && tier.items.some(i => i.id === selected)}
         <div class="detail">
-          {#if selectedRoute.length}
-            <ol class="route">
-              {#each selectedRoute as step, i}
-                <li>
-                  <span class="stepno">{i + 1}</span>
-                  <img class="palicon sm" src={speciesIcon(step.parentA)} alt="" />
-                  {speciesName(step.parentA)} <span class="muted">+</span>
-                  <img class="palicon sm" src={speciesIcon(step.parentB)} alt="" />
-                  {speciesName(step.parentB)}
-                  <span class="muted">→</span>
-                  <img class="palicon sm" src={speciesIcon(step.child)} alt="" />
-                  <strong>{speciesName(step.child)}</strong>
-                </li>
-              {/each}
-            </ol>
-          {:else if tier.depth < 0}
-            <p class="muted">No route from your current pals — this species must be caught,
-              or breeds only with itself (legendaries).</p>
-          {:else}
-            <p class="muted">You already own {speciesName(selected)}.</p>
-          {/if}
-          {#if tier.depth >= 1}
-            <button class="primary" onclick={() => ongoto(selected)}>
-              Open in breeding planner →
-            </button>
-          {/if}
+          <div class="dgrid">
+            <div>
+              {#if selectedRoute.length}
+                <ol class="route">
+                  {#each selectedRoute as step, i}
+                    <li>
+                      <span class="stepno">{i + 1}</span>
+                      <img class="palicon sm" src={speciesIcon(step.parentA)} alt="" />
+                      {speciesName(step.parentA)} <span class="muted">+</span>
+                      <img class="palicon sm" src={speciesIcon(step.parentB)} alt="" />
+                      {speciesName(step.parentB)}
+                      <span class="muted">→</span>
+                      <img class="palicon sm" src={speciesIcon(step.child)} alt="" />
+                      <strong>{speciesName(step.child)}</strong>
+                    </li>
+                  {/each}
+                </ol>
+              {:else if tier.depth < 0}
+                <p class="muted">No route from your current pals — this species must be caught,
+                  or breeds only with itself (legendaries).</p>
+              {:else}
+                <p class="muted">You already own {speciesName(selected)}.</p>
+              {/if}
+              {#if tier.depth >= 1}
+                <button class="primary" onclick={() => ongoto(selected)}>
+                  Open in breeding planner →
+                </button>
+              {/if}
+            </div>
+            <div class="dcard">
+              <SpeciesCard speciesId={selected} />
+            </div>
+          </div>
         </div>
       {/if}
     </section>
@@ -169,6 +178,12 @@
   .detail {
     margin-top: 12px; background: var(--panel); border: 1px solid var(--border);
     border-radius: var(--radius); padding: 12px 16px;
+  }
+  .dgrid { display: grid; grid-template-columns: 1fr 380px; gap: 20px; align-items: start; }
+  @media (max-width: 900px) { .dgrid { grid-template-columns: 1fr; } }
+  .dcard {
+    background: var(--panel2); border: 1px solid var(--border-soft);
+    border-radius: var(--radius); padding: 12px 14px;
   }
   .route { list-style: none; padding: 0; margin: 0 0 10px; }
   .route li { display: flex; align-items: center; gap: 8px; padding: 4px 0; }

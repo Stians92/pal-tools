@@ -54,6 +54,12 @@ export const passiveRank = (id: string): number => passiveById(id)?.rank ?? 1;
 export const sortPassivesByRank = (ids: string[]): string[] =>
   [...ids].sort((a, b) => passiveRank(b) - passiveRank(a) || passiveName(a).localeCompare(passiveName(b)));
 export const speciesName = (id: string): string => speciesById(id)?.name ?? id;
+/** In-game rarity tier for badges. */
+export const rarityInfo = (r: number): { label: string; cls: string } =>
+  r >= 10 ? { label: `${r} Legendary`, cls: 'legendary' }
+  : r >= 8 ? { label: `${r} Epic`, cls: 'epic' }
+  : r >= 5 ? { label: `${r} Rare`, cls: 'rare' }
+  : { label: `${r} Common`, cls: 'common' };
 /** Icon URL for a species (files in web/public/pals, keyed by canonical id). */
 export const speciesIcon = (id: string): string | null => {
   const s = speciesById(id);
