@@ -314,6 +314,102 @@ export function routeFor(reach: Reachability, targetId: string): BreedingStep[] 
 }
 
 /**
+ * Passive-carrier chain: move a set of passives from an owned pal onto a
+ * target species. Starts from every owned pal that has ALL desired passives,
+ * then BFS over species — each step breeds the carrier lineage with an owned
+ * species, and the child becomes the new carrier. Assumes the passives are
+ * successfully inherited at every step (the per-egg odds are reported so the
+ * UI can say how many eggs to expect).
+ */
+export interface PassiveStep extends BreedingStep {
+  /** chance this step's egg inherits all desired passives, using the actual
+      carrier/partner pals' passive pools */
+  prob: number;
+}
+
+export interface PassivePlan {
+  /** species the chain starts from */
+  start: Species;
+  /** owned pals of that species holding all desired passives */
+  carriers: Pal[];
+  steps: PassiveStep[];
+  /** product of per-step probabilities */
+  overall: number;
+  /** expected number of eggs across the whole chain (sum of 1/p per step) */
+  expectedEggs: number;
+}
+
+export function planPassiveRoute(pals: Pal[], targetId: string, desired: string[]): PassivePlan | null {
+  const t = speciesById(targetId);
+  if (!t || !desired.length) return null;
+  const breedablePals = pals.filter(p => p.gender === 'Male' || p.gender === 'Female');
+  const hasAll = (p: Pal) => desired.every(d => p.passives.some(x => x.toLowerCase() === d.toLowerCase()));
+  const carriers = breedablePals.filter(hasAll);
+  if (!carriers.length) return null;
+
+  const palsBySpecies = new Map<string, Pal[]>();
+  for (const p of breedablePals) {
+    const id = speciesById(palSpeciesId(p))?.id;
+    if (!id) continue;
+    (palsBySpecies.get(id) ?? palsBySpecies.set(id, []).get(id)!).push(p);
+  }
+  const partnerSpecies = [...palsBySpecies.keys()];
+  const startIds = [...new Set(carriers.map(p => speciesById(palSpeciesId(p))!.id))];
+
+  // multi-source BFS: state = species currently carrying the passives
+  const dist = new Map<string, number>();
+  const prev = new Map<string, { from: string; partner: string }>();
+  const queue: string[] = [];
+  for (const s of startIds) { dist.set(s, 0); queue.push(s); }
+  for (let qi = 0; qi < queue.length && !dist.has(t.id); qi++) {
+    const cur = queue[qi];
+    const d = dist.get(cur)!;
+    for (const o of partnerSpecies) {
+      const child = childOf(cur, o);
+      if (!child) continue;
+      const c = speciesById(child)!.id;
+      if (!dist.has(c)) {
+        dist.set(c, d + 1);
+        prev.set(c, { from: cur, partner: o });
+        queue.push(c);
+      }
+    }
+  }
+  if (!dist.has(t.id)) return null;
+
+  const raw: BreedingStep[] = [];
+  let cur = t.id;
+  while (prev.has(cur)) {
+    const rec = prev.get(cur)!;
+    raw.unshift({ parentA: rec.from, parentB: rec.partner, child: cur });
+    cur = rec.from;
+  }
+  const start = speciesById(cur)!;
+  const startCarriers = carriers.filter(p => speciesById(palSpeciesId(p))!.id === start.id);
+
+  // per-step odds: pick the partner pal (of that species) whose extra passives
+  // dilute the pool least; step 1 uses the actual carrier's passives, later
+  // steps assume you keep only eggs with exactly the wanted passives
+  const bestProb = (carrierPassives: string[], partnerId: string): number => {
+    let best = 0;
+    for (const q of palsBySpecies.get(partnerId) ?? []) {
+      const pool = [...new Set([...carrierPassives, ...q.passives])];
+      best = Math.max(best, passiveProbability(pool, desired));
+    }
+    return best;
+  };
+  const steps: PassiveStep[] = raw.map((s, i) => ({
+    ...s,
+    prob: i === 0
+      ? Math.max(...startCarriers.map(c => bestProb(c.passives, s.parentB)))
+      : bestProb(desired, s.parentB),
+  }));
+  const overall = steps.reduce((acc, s) => acc * s.prob, 1);
+  const expectedEggs = steps.reduce((acc, s) => acc + (s.prob > 0 ? 1 / s.prob : Infinity), 0);
+  return { start, carriers: startCarriers, steps, overall, expectedEggs };
+}
+
+/**
  * Minimal-breed plan for a target from the owned set. Delegates to the same
  * cost-relaxation engine as the Coverage tab (`reachabilityMap`/`routeFor`) so
  * both views always agree on the route and its length. Returns null if the

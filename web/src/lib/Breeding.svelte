@@ -3,14 +3,17 @@
   import {
     allSpecies, allPassives, speciesName, passiveName, palSpeciesId, speciesIcon,
     sortPassivesByRank,
-    findPairs, planBreeding, type BreedingPair, type BreedingPlan,
+    findPairs, planBreeding, planPassiveRoute,
+    type BreedingPair, type BreedingPlan, type PassivePlan,
   } from './breeding';
   import Passive from './Passive.svelte';
 
   let { pals, players, targetId = $bindable(new URLSearchParams(location.search).get('target') ?? '') }:
     { pals: Pal[]; players: Player[]; targetId?: string } = $props();
   let targetQuery = $state('');
-  let desired = $state<string[]>([]);
+  // dev-only ?want=<id,id> preselects passives for screenshot tests
+  let desired = $state<string[]>(
+    import.meta.env.DEV ? new URLSearchParams(location.search).get('want')?.split(',').filter(Boolean) ?? [] : []);
   let passiveQuery = $state('');
   let maxRows = $state(100);
 
@@ -36,8 +39,14 @@
   const pairs = $derived.by((): BreedingPair[] =>
     targetId ? findPairs(breedable, targetId, desired) : []);
 
+  // with passives selected and no direct pair: chain the trait from a carrier
+  const passivePlan = $derived.by((): PassivePlan | null =>
+    targetId && desired.length && pairs.length === 0
+      ? planPassiveRoute(breedable, targetId, desired) : null);
+
   const plan = $derived.by((): BreedingPlan | null =>
-    targetId && pairs.length === 0 ? planBreeding(ownedSpecies, targetId) : null);
+    targetId && !desired.length && pairs.length === 0 ? planBreeding(ownedSpecies, targetId) : null);
+
 
   function togglePassive(id: string) {
     desired = desired.includes(id)
@@ -137,6 +146,64 @@
       {#if pairs.length > maxRows}
         <button onclick={() => (maxRows += 200)}>Show more ({pairs.length - maxRows} hidden)</button>
       {/if}
+    {:else if desired.length}
+      {#if passivePlan && passivePlan.steps.length}
+        <h3>
+          Carry {desired.map(passiveName).join(' + ')} to
+          <img class="palicon" src={speciesIcon(targetId)} alt="" />
+          {speciesName(targetId)} — {passivePlan.steps.length} breeds
+        </h3>
+        <p class="carrier">
+          Start from your
+          <img class="palicon sm" src={speciesIcon(passivePlan.start.id)} alt="" />
+          <strong>{passivePlan.start.name}</strong> with the passives:
+          {passivePlan.carriers.map(palLabel).join(', ')}
+        </p>
+        <ol class="plan">
+          {#each passivePlan.steps as step, i}
+            <li>
+              <span class="stepno">{i + 1}</span>
+              <span class="pair">
+                <img class="palicon sm" src={speciesIcon(step.parentA)} alt="" />
+                {speciesName(step.parentA)} <span class="tagx">carrier</span>
+                <span class="muted">+</span>
+                <img class="palicon sm" src={speciesIcon(step.parentB)} alt="" />
+                {speciesName(step.parentB)}
+              </span>
+              <span class="arrow">→</span>
+              <img class="palicon sm" src={speciesIcon(step.child)} alt="" />
+              <strong>{speciesName(step.child)}</strong>
+              <span class="stepprob" class:good={step.prob >= 0.3}>{pct(step.prob)}</span>
+            </li>
+          {/each}
+        </ol>
+        <p class="muted">
+          Per-step odds use your actual pals' passive pools (best partner of each species);
+          keep only eggs that inherit {desired.length === 1 ? 'the passive' : 'all wanted passives'}
+          before the next step. Whole chain ≈ <strong>{pct(passivePlan.overall)}</strong> straight
+          through, or expect around <strong>{Math.ceil(passivePlan.expectedEggs)} eggs</strong> total
+          when re-rolling each step. Each step assumes you can get the needed gender.
+        </p>
+      {:else if passivePlan}
+        <h3>You already have it</h3>
+        <p class="muted">
+          You own {speciesName(targetId)} with
+          {desired.map(passiveName).join(' + ')}: {passivePlan.carriers.map(palLabel).join(', ')}.
+        </p>
+      {:else}
+        <h3>No carrier</h3>
+        <p class="muted">
+          None of your breedable pals has
+          {desired.length === 1 ? '' : 'all of'} {desired.map(passiveName).join(' + ')}
+          {desired.length === 1 ? '' : ' together'} — catch or breed one first
+          {#if desired.length > 1}(or plan one passive at a time and combine){/if},
+          or deselect the passive to see the species-level route.
+        </p>
+      {/if}
+    {:else if plan && plan.steps.length === 0}
+      <h3>Already owned</h3>
+      <p class="muted">You already own {speciesName(targetId)} — select passives to plan
+        moving a trait onto it, or check your pairs in the palbox.</p>
     {:else if plan}
       <h3>No direct pair — multi-step route ({plan.steps.length} steps)</h3>
       <ol class="plan">
@@ -213,4 +280,12 @@
     display: inline-flex; align-items: center; justify-content: center;
   }
   .arrow { color: var(--muted); }
+  .carrier { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+  .tagx {
+    background: var(--accent-soft); color: var(--accent);
+    border-radius: 5px; padding: 0 6px; font-size: 10.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .03em;
+  }
+  .stepprob { margin-left: auto; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .stepprob.good { color: var(--good); font-weight: 600; }
 </style>
