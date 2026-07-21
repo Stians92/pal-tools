@@ -325,6 +325,8 @@ export interface PassiveStep extends BreedingStep {
   /** chance this step's egg inherits all desired passives, using the actual
       carrier/partner pals' passive pools */
   prob: number;
+  /** the owned pal of the partner species whose pool gives those odds */
+  partnerPal: Pal | null;
 }
 
 export interface PassivePlan {
@@ -332,6 +334,8 @@ export interface PassivePlan {
   start: Species;
   /** owned pals of that species holding all desired passives */
   carriers: Pal[];
+  /** the carrier pal the first step's odds are based on */
+  bestCarrier: Pal | null;
   steps: PassiveStep[];
   /** product of per-step probabilities */
   overall: number;
@@ -372,21 +376,29 @@ export function planPassiveRoutes(pals: Pal[], targetId: string, desired: string
 
   // best inherit chance for a step: pick the partner pal (of that species)
   // whose extra passives dilute the pool least
-  const bestProb = (carrierPassives: string[], partnerId: string): number => {
+  const bestProb = (carrierPassives: string[], partnerId: string): { prob: number; pal: Pal | null } => {
     let best = 0;
+    let bestPal: Pal | null = null;
     for (const q of palsBySpecies.get(partnerId) ?? []) {
       const pool = [...new Set([...carrierPassives, ...q.passives])];
-      best = Math.max(best, passiveProbability(pool, desired));
+      const p = passiveProbability(pool, desired);
+      if (p > best) { best = p; bestPal = q; }
     }
-    return best;
+    return { prob: best, pal: bestPal };
   };
   // steps after the first assume you keep only eggs with exactly the wanted
   // passives, so the carrier pool is clean; the first step uses the actual pal
-  const cleanProb = new Map<string, number>(partnerSpecies.map(o => [o, bestProb(desired, o)]));
-  const startProb = (s: string, o: string): number =>
-    Math.max(...carriersBySpecies.get(s)!.map(c => bestProb(c.passives, o)));
+  const cleanProb = new Map(partnerSpecies.map(o => [o, bestProb(desired, o)]));
+  const startProb = (s: string, o: string): { prob: number; pal: Pal | null; carrier: Pal } => {
+    let best = { prob: -1, pal: null as Pal | null, carrier: carriersBySpecies.get(s)![0] };
+    for (const c of carriersBySpecies.get(s)!) {
+      const r = bestProb(c.passives, o);
+      if (r.prob > best.prob) best = { ...r, carrier: c };
+    }
+    return best;
+  };
   const stepProb = (from: string, partner: string): number =>
-    carriersBySpecies.has(from) ? startProb(from, partner) : cleanProb.get(partner) ?? 0;
+    (carriersBySpecies.has(from) ? startProb(from, partner) : cleanProb.get(partner))?.prob ?? 0;
 
   type Prev = Map<string, { from: string; partner: string }>;
   const makePlan = (prev: Prev): PassivePlan => {
@@ -398,13 +410,21 @@ export function planPassiveRoutes(pals: Pal[], targetId: string, desired: string
       cur = rec.from;
     }
     const start = speciesById(cur)!;
-    const steps: PassiveStep[] = raw.map((s, i) => ({
-      ...s,
-      prob: i === 0 ? startProb(start.id, s.parentB) : cleanProb.get(s.parentB) ?? 0,
-    }));
+    let bestCarrier: Pal | null = null;
+    const steps: PassiveStep[] = raw.map((s, i) => {
+      if (i === 0) {
+        const r = startProb(start.id, s.parentB);
+        bestCarrier = r.carrier;
+        return { ...s, prob: r.prob, partnerPal: r.pal };
+      }
+      const r = cleanProb.get(s.parentB);
+      return { ...s, prob: r?.prob ?? 0, partnerPal: r?.pal ?? null };
+    });
+    const carriersHere = carriersBySpecies.get(start.id) ?? [];
     return {
       start,
-      carriers: carriersBySpecies.get(start.id) ?? [],
+      carriers: carriersHere,
+      bestCarrier: bestCarrier ?? carriersHere[0] ?? null,
       steps,
       overall: steps.reduce((acc, s) => acc * s.prob, 1),
       expectedEggs: steps.reduce((acc, s) => acc + (s.prob > 0 ? 1 / s.prob : Infinity), 0),

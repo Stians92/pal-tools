@@ -64,28 +64,49 @@
     `${speciesName(palSpeciesId(p))}${p.nickname ? ` “${p.nickname}”` : ''} Lv${p.level}`;
 </script>
 
+{#snippet palWithPassives(p: Pal)}
+  <span class="usepal">
+    <img class="palicon sm" src={speciesIcon(palSpeciesId(p))} alt="" loading="lazy" />
+    {palLabel(p)}
+  </span>
+  {#if p.passives.length}
+    {#each sortPassivesByRank(p.passives) as ps (ps)}<Passive id={ps} />{/each}
+  {:else}
+    <span class="muted">no passives</span>
+  {/if}
+{/snippet}
+
 {#snippet chainBlock(plan: PassivePlan)}
-  <p class="carrier">
-    Start from your
-    <img class="palicon sm" src={speciesIcon(plan.start.id)} alt="" />
-    <strong>{plan.start.name}</strong> with the passives:
-    {plan.carriers.map(palLabel).join(', ')}
-  </p>
-  <ol class="plan">
+  {#if plan.bestCarrier}
+    <p class="carrier">
+      Start from your {@render palWithPassives(plan.bestCarrier)}
+      {#if plan.carriers.length > 1}
+        <span class="muted">(+{plan.carriers.length - 1} more with the passive)</span>
+      {/if}
+    </p>
+  {/if}
+  <ol class="plan pchain">
     {#each plan.steps as step, i}
       <li>
-        <span class="stepno">{i + 1}</span>
-        <span class="pair">
-          <img class="palicon sm" src={speciesIcon(step.parentA)} alt="" />
-          {speciesName(step.parentA)} <span class="tagx">carrier</span>
-          <span class="muted">+</span>
-          <img class="palicon sm" src={speciesIcon(step.parentB)} alt="" />
-          {speciesName(step.parentB)}
-        </span>
-        <span class="arrow">→</span>
-        <img class="palicon sm" src={speciesIcon(step.child)} alt="" />
-        <strong>{speciesName(step.child)}</strong>
-        <span class="stepprob" class:good={step.prob >= 0.3}>{pct(step.prob)}</span>
+        <div class="steprow">
+          <span class="stepno">{i + 1}</span>
+          <span class="pair">
+            <img class="palicon sm" src={speciesIcon(step.parentA)} alt="" />
+            {speciesName(step.parentA)} <span class="tagx">carrier</span>
+            <span class="muted">+</span>
+            <img class="palicon sm" src={speciesIcon(step.parentB)} alt="" />
+            {speciesName(step.parentB)}
+          </span>
+          <span class="arrow">→</span>
+          <img class="palicon sm" src={speciesIcon(step.child)} alt="" />
+          <strong>{speciesName(step.child)}</strong>
+          <span class="stepprob" class:good={step.prob >= 0.3}>{pct(step.prob)}</span>
+        </div>
+        {#if step.partnerPal}
+          <div class="stepuse">
+            <span class="muted">use</span> {@render palWithPassives(step.partnerPal)}
+          </div>
+        {/if}
       </li>
     {/each}
   </ol>
@@ -315,4 +336,11 @@
   .stepprob.good { color: var(--good); font-weight: 600; }
   .routehead { font-size: 13px; margin: 18px 0 4px; color: var(--accent); }
   .chainstats { margin: 4px 0 0; font-size: 12.5px; }
+  .pchain li { flex-direction: column; align-items: stretch; gap: 6px; }
+  .steprow { display: flex; align-items: center; gap: 10px; }
+  .stepuse {
+    display: flex; align-items: center; gap: 6px; flex-wrap: wrap;
+    padding-left: 32px; font-size: 12px;
+  }
+  .usepal { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
 </style>

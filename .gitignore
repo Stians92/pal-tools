@@ -4,4 +4,4 @@ dist/
 # personal save data — never commit
 45E8042741E6A1DEDCEF279A008D4C6B/
 pals.json
-web/public/testsave/
+**/testsave/
