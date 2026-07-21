@@ -339,7 +339,16 @@ export interface PassivePlan {
   expectedEggs: number;
 }
 
-export function planPassiveRoute(pals: Pal[], targetId: string, desired: string[]): PassivePlan | null {
+export interface PassiveRouteSet {
+  /** every owned pal holding all desired passives (any species) */
+  carriers: Pal[];
+  /** fewest breeds — null when no carrier chain reaches the target */
+  shortest: PassivePlan | null;
+  /** fewer expected eggs via cleaner partners, when meaningfully better */
+  cleanest: PassivePlan | null;
+}
+
+export function planPassiveRoutes(pals: Pal[], targetId: string, desired: string[]): PassiveRouteSet | null {
   const t = speciesById(targetId);
   if (!t || !desired.length) return null;
   const breedablePals = pals.filter(p => p.gender === 'Male' || p.gender === 'Female');
@@ -354,42 +363,15 @@ export function planPassiveRoute(pals: Pal[], targetId: string, desired: string[
     (palsBySpecies.get(id) ?? palsBySpecies.set(id, []).get(id)!).push(p);
   }
   const partnerSpecies = [...palsBySpecies.keys()];
-  const startIds = [...new Set(carriers.map(p => speciesById(palSpeciesId(p))!.id))];
-
-  // multi-source BFS: state = species currently carrying the passives
-  const dist = new Map<string, number>();
-  const prev = new Map<string, { from: string; partner: string }>();
-  const queue: string[] = [];
-  for (const s of startIds) { dist.set(s, 0); queue.push(s); }
-  for (let qi = 0; qi < queue.length && !dist.has(t.id); qi++) {
-    const cur = queue[qi];
-    const d = dist.get(cur)!;
-    for (const o of partnerSpecies) {
-      const child = childOf(cur, o);
-      if (!child) continue;
-      const c = speciesById(child)!.id;
-      if (!dist.has(c)) {
-        dist.set(c, d + 1);
-        prev.set(c, { from: cur, partner: o });
-        queue.push(c);
-      }
-    }
+  const carriersBySpecies = new Map<string, Pal[]>();
+  for (const c of carriers) {
+    const id = speciesById(palSpeciesId(c))!.id;
+    (carriersBySpecies.get(id) ?? carriersBySpecies.set(id, []).get(id)!).push(c);
   }
-  if (!dist.has(t.id)) return null;
+  const startIds = [...carriersBySpecies.keys()];
 
-  const raw: BreedingStep[] = [];
-  let cur = t.id;
-  while (prev.has(cur)) {
-    const rec = prev.get(cur)!;
-    raw.unshift({ parentA: rec.from, parentB: rec.partner, child: cur });
-    cur = rec.from;
-  }
-  const start = speciesById(cur)!;
-  const startCarriers = carriers.filter(p => speciesById(palSpeciesId(p))!.id === start.id);
-
-  // per-step odds: pick the partner pal (of that species) whose extra passives
-  // dilute the pool least; step 1 uses the actual carrier's passives, later
-  // steps assume you keep only eggs with exactly the wanted passives
+  // best inherit chance for a step: pick the partner pal (of that species)
+  // whose extra passives dilute the pool least
   const bestProb = (carrierPassives: string[], partnerId: string): number => {
     let best = 0;
     for (const q of palsBySpecies.get(partnerId) ?? []) {
@@ -398,15 +380,91 @@ export function planPassiveRoute(pals: Pal[], targetId: string, desired: string[
     }
     return best;
   };
-  const steps: PassiveStep[] = raw.map((s, i) => ({
-    ...s,
-    prob: i === 0
-      ? Math.max(...startCarriers.map(c => bestProb(c.passives, s.parentB)))
-      : bestProb(desired, s.parentB),
-  }));
-  const overall = steps.reduce((acc, s) => acc * s.prob, 1);
-  const expectedEggs = steps.reduce((acc, s) => acc + (s.prob > 0 ? 1 / s.prob : Infinity), 0);
-  return { start, carriers: startCarriers, steps, overall, expectedEggs };
+  // steps after the first assume you keep only eggs with exactly the wanted
+  // passives, so the carrier pool is clean; the first step uses the actual pal
+  const cleanProb = new Map<string, number>(partnerSpecies.map(o => [o, bestProb(desired, o)]));
+  const startProb = (s: string, o: string): number =>
+    Math.max(...carriersBySpecies.get(s)!.map(c => bestProb(c.passives, o)));
+  const stepProb = (from: string, partner: string): number =>
+    carriersBySpecies.has(from) ? startProb(from, partner) : cleanProb.get(partner) ?? 0;
+
+  type Prev = Map<string, { from: string; partner: string }>;
+  const makePlan = (prev: Prev): PassivePlan => {
+    const raw: BreedingStep[] = [];
+    let cur = t.id;
+    while (prev.has(cur)) {
+      const rec = prev.get(cur)!;
+      raw.unshift({ parentA: rec.from, parentB: rec.partner, child: cur });
+      cur = rec.from;
+    }
+    const start = speciesById(cur)!;
+    const steps: PassiveStep[] = raw.map((s, i) => ({
+      ...s,
+      prob: i === 0 ? startProb(start.id, s.parentB) : cleanProb.get(s.parentB) ?? 0,
+    }));
+    return {
+      start,
+      carriers: carriersBySpecies.get(start.id) ?? [],
+      steps,
+      overall: steps.reduce((acc, s) => acc * s.prob, 1),
+      expectedEggs: steps.reduce((acc, s) => acc + (s.prob > 0 ? 1 / s.prob : Infinity), 0),
+    };
+  };
+
+  // --- fewest breeds: multi-source BFS over carrying species ---
+  const dist = new Map<string, number>();
+  const prevS: Prev = new Map();
+  const queue: string[] = [];
+  for (const s of startIds) { dist.set(s, 0); queue.push(s); }
+  for (let qi = 0; qi < queue.length && !dist.has(t.id); qi++) {
+    const cur = queue[qi];
+    for (const o of partnerSpecies) {
+      const child = childOf(cur, o);
+      if (!child) continue;
+      const c = speciesById(child)!.id;
+      if (!dist.has(c)) {
+        dist.set(c, dist.get(cur)! + 1);
+        prevS.set(c, { from: cur, partner: o });
+        queue.push(c);
+      }
+    }
+  }
+  if (!dist.has(t.id)) return { carriers, shortest: null, cleanest: null };
+  const shortest = makePlan(prevS);
+
+  // --- fewest expected eggs: Dijkstra, edge weight = 1 / inherit chance,
+  //     choosing the cleanest partner for each step ---
+  const cost = new Map<string, number>();
+  const prevC: Prev = new Map();
+  const done = new Set<string>();
+  for (const s of startIds) cost.set(s, 0);
+  for (;;) {
+    let u: string | null = null;
+    for (const [k, v] of cost) if (!done.has(k) && (u === null || v < cost.get(u)!)) u = k;
+    if (u === null || u === t.id) break;
+    done.add(u);
+    for (const o of partnerSpecies) {
+      const child = childOf(u, o);
+      if (!child) continue;
+      const c = speciesById(child)!.id;
+      const p = stepProb(u, o);
+      if (p <= 0) continue;
+      const w = cost.get(u)! + 1 / p;
+      if (w < (cost.get(c) ?? Infinity)) {
+        cost.set(c, w);
+        prevC.set(c, { from: u, partner: o });
+      }
+    }
+  }
+  let cleanest: PassivePlan | null = null;
+  if (cost.has(t.id)) {
+    const plan = makePlan(prevC);
+    const differs = JSON.stringify(plan.steps.map(s => [s.parentA, s.parentB])) !==
+      JSON.stringify(shortest.steps.map(s => [s.parentA, s.parentB]));
+    // only worth showing when it actually saves an egg on average
+    if (differs && plan.expectedEggs < shortest.expectedEggs - 0.5) cleanest = plan;
+  }
+  return { carriers, shortest, cleanest };
 }
 
 /**

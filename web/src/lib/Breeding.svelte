@@ -3,8 +3,8 @@
   import {
     allSpecies, allPassives, speciesName, passiveName, palSpeciesId, speciesIcon,
     sortPassivesByRank,
-    findPairs, planBreeding, planPassiveRoute,
-    type BreedingPair, type BreedingPlan, type PassivePlan,
+    findPairs, planBreeding, planPassiveRoutes,
+    type BreedingPair, type BreedingPlan, type PassivePlan, type PassiveRouteSet,
   } from './breeding';
   import Passive from './Passive.svelte';
 
@@ -40,9 +40,9 @@
     targetId ? findPairs(breedable, targetId, desired) : []);
 
   // with passives selected and no direct pair: chain the trait from a carrier
-  const passivePlan = $derived.by((): PassivePlan | null =>
+  const passiveRoutes = $derived.by((): PassiveRouteSet | null =>
     targetId && desired.length && pairs.length === 0
-      ? planPassiveRoute(breedable, targetId, desired) : null);
+      ? planPassiveRoutes(breedable, targetId, desired) : null);
 
   const plan = $derived.by((): BreedingPlan | null =>
     targetId && !desired.length && pairs.length === 0 ? planBreeding(ownedSpecies, targetId) : null);
@@ -63,6 +63,37 @@
   const palLabel = (p: Pal) =>
     `${speciesName(palSpeciesId(p))}${p.nickname ? ` “${p.nickname}”` : ''} Lv${p.level}`;
 </script>
+
+{#snippet chainBlock(plan: PassivePlan)}
+  <p class="carrier">
+    Start from your
+    <img class="palicon sm" src={speciesIcon(plan.start.id)} alt="" />
+    <strong>{plan.start.name}</strong> with the passives:
+    {plan.carriers.map(palLabel).join(', ')}
+  </p>
+  <ol class="plan">
+    {#each plan.steps as step, i}
+      <li>
+        <span class="stepno">{i + 1}</span>
+        <span class="pair">
+          <img class="palicon sm" src={speciesIcon(step.parentA)} alt="" />
+          {speciesName(step.parentA)} <span class="tagx">carrier</span>
+          <span class="muted">+</span>
+          <img class="palicon sm" src={speciesIcon(step.parentB)} alt="" />
+          {speciesName(step.parentB)}
+        </span>
+        <span class="arrow">→</span>
+        <img class="palicon sm" src={speciesIcon(step.child)} alt="" />
+        <strong>{speciesName(step.child)}</strong>
+        <span class="stepprob" class:good={step.prob >= 0.3}>{pct(step.prob)}</span>
+      </li>
+    {/each}
+  </ol>
+  <p class="chainstats muted">
+    Whole chain ≈ <strong>{pct(plan.overall)}</strong> straight through ·
+    expect around <strong>{Math.ceil(plan.expectedEggs)} eggs</strong> total when re-rolling each step.
+  </p>
+{/snippet}
 
 <div class="breeding">
   <section class="picker">
@@ -147,48 +178,42 @@
         <button onclick={() => (maxRows += 200)}>Show more ({pairs.length - maxRows} hidden)</button>
       {/if}
     {:else if desired.length}
-      {#if passivePlan && passivePlan.steps.length}
+      {#if passiveRoutes && passiveRoutes.shortest && passiveRoutes.shortest.steps.length}
         <h3>
           Carry {desired.map(passiveName).join(' + ')} to
           <img class="palicon" src={speciesIcon(targetId)} alt="" />
-          {speciesName(targetId)} — {passivePlan.steps.length} breeds
+          {speciesName(targetId)}
         </h3>
-        <p class="carrier">
-          Start from your
-          <img class="palicon sm" src={speciesIcon(passivePlan.start.id)} alt="" />
-          <strong>{passivePlan.start.name}</strong> with the passives:
-          {passivePlan.carriers.map(palLabel).join(', ')}
-        </p>
-        <ol class="plan">
-          {#each passivePlan.steps as step, i}
-            <li>
-              <span class="stepno">{i + 1}</span>
-              <span class="pair">
-                <img class="palicon sm" src={speciesIcon(step.parentA)} alt="" />
-                {speciesName(step.parentA)} <span class="tagx">carrier</span>
-                <span class="muted">+</span>
-                <img class="palicon sm" src={speciesIcon(step.parentB)} alt="" />
-                {speciesName(step.parentB)}
-              </span>
-              <span class="arrow">→</span>
-              <img class="palicon sm" src={speciesIcon(step.child)} alt="" />
-              <strong>{speciesName(step.child)}</strong>
-              <span class="stepprob" class:good={step.prob >= 0.3}>{pct(step.prob)}</span>
-            </li>
-          {/each}
-        </ol>
+        {#if passiveRoutes.cleanest}
+          <h4 class="routehead">Fewest breeds — {passiveRoutes.shortest.steps.length}</h4>
+        {/if}
+        {@render chainBlock(passiveRoutes.shortest)}
+        {#if passiveRoutes.cleanest}
+          <h4 class="routehead">
+            Better odds — {passiveRoutes.cleanest.steps.length} breeds with cleaner partners
+          </h4>
+          {@render chainBlock(passiveRoutes.cleanest)}
+        {/if}
         <p class="muted">
           Per-step odds use your actual pals' passive pools (best partner of each species);
           keep only eggs that inherit {desired.length === 1 ? 'the passive' : 'all wanted passives'}
-          before the next step. Whole chain ≈ <strong>{pct(passivePlan.overall)}</strong> straight
-          through, or expect around <strong>{Math.ceil(passivePlan.expectedEggs)} eggs</strong> total
-          when re-rolling each step. Each step assumes you can get the needed gender.
+          before the next step. Each step assumes you can get the needed gender.
         </p>
-      {:else if passivePlan}
+      {:else if passiveRoutes && passiveRoutes.shortest}
         <h3>You already have it</h3>
         <p class="muted">
           You own {speciesName(targetId)} with
-          {desired.map(passiveName).join(' + ')}: {passivePlan.carriers.map(palLabel).join(', ')}.
+          {desired.map(passiveName).join(' + ')}: {passiveRoutes.shortest.carriers.map(palLabel).join(', ')}.
+        </p>
+      {:else if passiveRoutes}
+        <h3>No carrier route</h3>
+        <p class="muted">
+          You have {desired.map(passiveName).join(' + ')} on
+          {passiveRoutes.carriers.length} pal{passiveRoutes.carriers.length === 1 ? '' : 's'}
+          ({[...new Set(passiveRoutes.carriers.map(p => speciesName(palSpeciesId(p))))].join(', ')}),
+          but no breeding chain keeps the carrier in every pair and still converges on
+          {speciesName(targetId)} — it may be a self-pair-only species. Catch a
+          {speciesName(targetId)} first, then breed the passive in via a same-species pair.
         </p>
       {:else}
         <h3>No carrier</h3>
@@ -288,4 +313,6 @@
   }
   .stepprob { margin-left: auto; color: var(--muted); font-variant-numeric: tabular-nums; }
   .stepprob.good { color: var(--good); font-weight: 600; }
+  .routehead { font-size: 13px; margin: 18px 0 4px; color: var(--accent); }
+  .chainstats { margin: 4px 0 0; font-size: 12.5px; }
 </style>
