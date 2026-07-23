@@ -11,6 +11,13 @@ const oodleDecompressFn = isNode ? require('./oodle.js').oodleDecompress
                                  : (...a) => globalThis.PalTools.oodleDecompress(...a);
 
 function parseSavHeader(u8) {
+  if (u8.byteLength === 0) {
+    throw new Error('file is empty (0 bytes) — if Palworld is running it may be ' +
+      'mid-write; close the game or copy the save folder first, then retry');
+  }
+  if (u8.byteLength < 12) {
+    throw new Error(`file is only ${u8.byteLength} bytes — truncated save`);
+  }
   const dv = new DataView(u8.buffer, u8.byteOffset, u8.byteLength);
   let off = 0;
   let uncompressedLen = dv.getUint32(0, true);
@@ -19,6 +26,7 @@ function parseSavHeader(u8) {
   let saveType = u8[11];
   off = 12;
   if (magic === 'CNK') {
+    if (u8.byteLength < 24) throw new Error(`chunked save header cut short at ${u8.byteLength} bytes`);
     uncompressedLen = dv.getUint32(12, true);
     compressedLen = dv.getUint32(16, true);
     magic = String.fromCharCode(u8[20], u8[21], u8[22]);
@@ -33,12 +41,17 @@ function decompressSav(u8) {
   const hdr = parseSavHeader(u8);
   const payload = u8.subarray(hdr.dataOffset);
   if (hdr.magic === 'PlM') {
+    if (payload.byteLength < hdr.compressedLen) {
+      throw new Error(`save is truncated: header says ${hdr.compressedLen} compressed bytes ` +
+        `but only ${payload.byteLength} are present — if Palworld is running it may be ` +
+        'mid-write; close the game or copy the save folder first, then retry');
+    }
     return oodleDecompress(payload, hdr.uncompressedLen);
   }
   if (hdr.magic === 'PlZ') {
-    throw new Error('PlZ (zlib) saves not supported yet');
+    throw new Error('this is a pre-1.0 save (PlZ/zlib compression) — not supported');
   }
-  throw new Error(`unknown save magic ${JSON.stringify(hdr.magic)}`);
+  throw new Error(`unknown save magic ${JSON.stringify(hdr.magic)} — not a Palworld .sav?`);
 }
 
 function oodleDecompress(payload, len) { return oodleDecompressFn(payload, len); }

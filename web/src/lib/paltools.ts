@@ -125,8 +125,21 @@ export async function loadSaveFiles(files: { path: string; file: File }[]): Prom
     f.path.startsWith(baseDir) &&
     new RegExp('^' + escapeRegExp(baseDir) + 'Players/[0-9A-F]+\\.sav$', 'i').test(f.path));
 
-  const levelBytes = new Uint8Array(await level.file.arrayBuffer());
-  const world = extractWorld(parseLevelSav(decompressSav(levelBytes)));
+  let levelBytes: Uint8Array;
+  try {
+    levelBytes = new Uint8Array(await level.file.arrayBuffer());
+  } catch {
+    // Chromium refuses to read a dropped file that changed on disk after the
+    // drop (ERR_UPLOAD_FILE_CHANGED) — happens when the game is saving
+    throw new Error(`${level.path} changed on disk while reading it — close ` +
+      'Palworld (or copy the save folder somewhere first), then drop it again');
+  }
+  let world: WorldData;
+  try {
+    world = extractWorld(parseLevelSav(decompressSav(levelBytes)));
+  } catch (e) {
+    throw new Error(`${level.path}: ${(e as Error).message}`);
+  }
 
   const metas: PlayerMeta[] = [];
   for (const pf of playerFiles) {
