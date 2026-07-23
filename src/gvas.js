@@ -161,6 +161,10 @@ function skipProperty(r, typeName, size) {
       node.arrayType = r.fstring();
       node.id = r.optionalGuid();
       break;
+    case 'SetProperty':
+      node.setType = r.fstring();
+      node.id = r.optionalGuid();
+      break;
     case 'MapProperty':
       node.keyType = r.fstring();
       node.valueType = r.fstring();
@@ -220,6 +224,16 @@ function readProperty(r, typeName, size, path, shouldExpand) {
       const id = r.optionalGuid();
       const value = readArrayValue(r, arrayType, size - 4, path, shouldExpand);
       return { type: typeName, arrayType, id, ...value };
+    }
+    case 'SetProperty': {
+      // element-type string, optional guid, then u32 removed-count (always 0
+      // in saves) followed by an array-style payload
+      const setType = r.fstring();
+      const id = r.optionalGuid();
+      const removed = r.u32();
+      if (removed !== 0) throw new Error(`SetProperty with ${removed} removals at ${path}`);
+      const value = readArrayValue(r, setType, size - 8, path, shouldExpand);
+      return { type: typeName, setType, id, ...value };
     }
     case 'MapProperty': {
       const keyType = r.fstring();

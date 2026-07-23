@@ -22,7 +22,8 @@ const world = pals.extractWorld(level);
 const playerMetas = [];
 const playersDir = path.join(saveDir, 'Players');
 for (const f of fs.readdirSync(playersDir)) {
-  if (!f.endsWith('.sav')) continue;
+  // hex-uid saves only — skips companions like the *_dps.sav pal-storage files
+  if (!/^[0-9A-F]+\.sav$/i.test(f)) continue;
   const gvasBytes = decompressSav(load(path.join(playersDir, f)));
   const parsed = pals.parsePlayerSav(gvasBytes);
   const meta = pals.extractPlayerMeta(parsed);
