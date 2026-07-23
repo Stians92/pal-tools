@@ -83,6 +83,7 @@ interface PalToolsGlobal {
   parseLevelSav(gvasBytes: Uint8Array): unknown;
   parsePlayerSav(gvasBytes: Uint8Array): unknown;
   extractWorld(parsed: unknown): WorldData;
+  extractDpsPals(parsed: unknown, ownerUid: string): Pal[];
   extractPlayerMeta(parsed: unknown): PlayerMeta;
   classifyPals(world: WorldData, metas: PlayerMeta[]): WorldData;
 }
@@ -93,6 +94,7 @@ export const decompressSav = (b: Uint8Array) => PT.decompressSav(b);
 export const parseLevelSav = (b: Uint8Array) => PT.parseLevelSav(b);
 export const parsePlayerSav = (b: Uint8Array) => PT.parsePlayerSav(b);
 export const extractWorld = (p: unknown) => PT.extractWorld(p);
+export const extractDpsPals = (p: unknown, uid: string) => PT.extractDpsPals(p, uid);
 export const extractPlayerMeta = (p: unknown) => PT.extractPlayerMeta(p);
 export const classifyPals = (w: WorldData, m: PlayerMeta[]) => PT.classifyPals(w, m);
 
@@ -150,6 +152,22 @@ export async function loadSaveFiles(files: { path: string; file: File }[]): Prom
       console.warn('player parse failed:', pf.path, e);
     }
   }
+
+  // Dimensional Pal Storage — per-player Players/<uid>_dps.sav companions
+  const dpsFiles = files.filter(f =>
+    f.path.startsWith(baseDir) &&
+    new RegExp('^' + escapeRegExp(baseDir) + 'Players/[0-9A-F]+_dps\\.sav$', 'i').test(f.path));
+  for (const df of dpsFiles) {
+    try {
+      const hex = df.path.match(/([0-9A-F]+)_dps\.sav$/i)![1].toLowerCase();
+      const uid = `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20, 32)}`;
+      const bytes = new Uint8Array(await df.file.arrayBuffer());
+      world.pals.push(...extractDpsPals(parsePlayerSav(decompressSav(bytes)), uid));
+    } catch (e) {
+      console.warn('dps parse failed:', df.path, e);
+    }
+  }
+
   classifyPals(world, metas);
   return {
     world,

@@ -98,6 +98,7 @@
     <option value="palbox">Palbox</option>
     <option value="party">Party</option>
     <option value="base/other">Base / other</option>
+    <option value="dps">Dimensional storage</option>
   </select>
   <select bind:value={fOwner}>
     <option value="">All owners</option>
@@ -147,7 +148,8 @@
           </td>
           <td>
             <span class="tag" class:party={p.where === 'party'} class:palbox={p.where === 'palbox'}
-                  class:base={p.where === 'base/other'}>{p.where}</span>
+                  class:base={p.where === 'base/other'} class:dps={p.where === 'dps'}
+                  title={p.where === 'dps' ? 'Dimensional Pal Storage' : undefined}>{p.where}</span>
           </td>
           <td class="num">{p.rank > 1 ? '★' + (p.rank - 1) : ''}</td>
           {#each [p.talentHp, p.talentShot, p.talentDefense] as iv}

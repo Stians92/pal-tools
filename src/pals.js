@@ -37,6 +37,70 @@ function parsePlayerSav(gvasBytes) {
 }
 
 // Extracts everything pal-related from a parsed Level.sav.
+// Build a pal record from a PalIndividualCharacterSaveParameter property map
+// (used by both Level.sav character entries and *_dps.sav storage slots).
+function palFromSaveParameter(p, base) {
+  const characterId = val(p.CharacterID) || '';
+  const gender = p.Gender ? String(p.Gender.value).replace('EPalGenderType::', '') : null;
+  const slotId = p.SlotId ? p.SlotId.value : null;
+  const containerId = slotId && slotId.ContainerId ? slotId.ContainerId.value.ID.value : null;
+  const slotIndex = slotId && slotId.SlotIndex ? slotId.SlotIndex.value : 0;
+  const hpNode = p.Hp || p.HP;
+  return {
+    ...base,
+    characterId,
+    species: characterId.replace(/^BOSS_/i, '').replace(/^PREDATOR_/i, ''),
+    isAlpha: /^BOSS_/i.test(characterId),
+    isLucky: !!(p.IsRarePal && p.IsRarePal.value),
+    gender,
+    rank: num(p, 'Rank', 1),
+    rankHp: num(p, 'Rank_HP', 0),
+    rankAttack: num(p, 'Rank_Attack', 0),
+    rankDefence: num(p, 'Rank_Defence', 0),
+    rankCraftSpeed: num(p, 'Rank_CraftSpeed', 0),
+    talentHp: num(p, 'Talent_HP', 0),
+    talentMelee: num(p, 'Talent_Melee', 0),
+    talentShot: num(p, 'Talent_Shot', 0),
+    talentDefense: num(p, 'Talent_Defense', 0),
+    passives: p.PassiveSkillList ? p.PassiveSkillList.values : [],
+    equipWaza: p.EquipWaza ? p.EquipWaza.values.map(w => String(w).replace('EPalWazaID::', '')) : [],
+    masteredWaza: p.MasteredWaza ? p.MasteredWaza.values.map(w => String(w).replace('EPalWazaID::', '')) : [],
+    hp: hpNode && hpNode.value && hpNode.value.Value ? hpNode.value.Value.value : null,
+    ownerUid: p.OwnerPlayerUId ? p.OwnerPlayerUId.value : null,
+    containerId,
+    slotIndex,
+    friendship: num(p, 'FriendshipPoint', 0),
+  };
+}
+
+// Dimensional Pal Storage (`Players/<uid>_dps.sav`): a flat SaveParameterArray
+// of PalDimensionPalStorageSaveParameter slots. Empty slots have no
+// CharacterID. Pals here live outside the world's container system, so they
+// get `where`/`ownerUid` preset from the file they came from.
+function extractDpsPals(parsed, ownerUid) {
+  const arr = parsed.properties.SaveParameterArray;
+  const slots = arr && arr.values ? arr.values : [];
+  const pals = [];
+  for (let i = 0; i < slots.length; i++) {
+    const sp = slots[i].SaveParameter;
+    const p = sp ? sp.value : {};
+    const characterId = val(p.CharacterID) || '';
+    if (!characterId || characterId === 'None') continue; // empty slot
+    if (p.IsPlayer && p.IsPlayer.value) continue;
+    const pal = palFromSaveParameter(p, {
+      key: { playerUid: ownerUid, instanceId: `dps-${ownerUid}-${i}` },
+      groupId: null,
+      nickname: val(p.NickName) || null,
+      level: num(p, 'Level', 1),
+      exp: num(p, 'Exp', 0),
+    });
+    pal.where = 'dps';
+    if (!pal.ownerUid) pal.ownerUid = ownerUid;
+    pals.push(pal);
+  }
+  return pals;
+}
+
 function extractWorld(level) {
   const world = level.properties.worldSaveData.value;
 
@@ -68,37 +132,7 @@ function extractWorld(level) {
         uid: key.playerUid,
       });
     } else {
-      const characterId = val(p.CharacterID) || '';
-      const gender = p.Gender ? String(p.Gender.value).replace('EPalGenderType::', '') : null;
-      const slotId = p.SlotId ? p.SlotId.value : null;
-      const containerId = slotId && slotId.ContainerId ? slotId.ContainerId.value.ID.value : null;
-      const slotIndex = slotId && slotId.SlotIndex ? slotId.SlotIndex.value : 0;
-      const hpNode = p.Hp || p.HP;
-      pals.push({
-        ...base,
-        characterId,
-        species: characterId.replace(/^BOSS_/i, '').replace(/^PREDATOR_/i, ''),
-        isAlpha: /^BOSS_/i.test(characterId),
-        isLucky: !!(p.IsRarePal && p.IsRarePal.value),
-        gender,
-        rank: num(p, 'Rank', 1),
-        rankHp: num(p, 'Rank_HP', 0),
-        rankAttack: num(p, 'Rank_Attack', 0),
-        rankDefence: num(p, 'Rank_Defence', 0),
-        rankCraftSpeed: num(p, 'Rank_CraftSpeed', 0),
-        talentHp: num(p, 'Talent_HP', 0),
-        talentMelee: num(p, 'Talent_Melee', 0),
-        talentShot: num(p, 'Talent_Shot', 0),
-        talentDefense: num(p, 'Talent_Defense', 0),
-        passives: p.PassiveSkillList ? p.PassiveSkillList.values : [],
-        equipWaza: p.EquipWaza ? p.EquipWaza.values.map(w => String(w).replace('EPalWazaID::', '')) : [],
-        masteredWaza: p.MasteredWaza ? p.MasteredWaza.values.map(w => String(w).replace('EPalWazaID::', '')) : [],
-        hp: hpNode && hpNode.value && hpNode.value.Value ? hpNode.value.Value.value : null,
-        ownerUid: p.OwnerPlayerUId ? p.OwnerPlayerUId.value : null,
-        containerId,
-        slotIndex,
-        friendship: num(p, 'FriendshipPoint', 0),
-      });
+      pals.push(palFromSaveParameter(p, base));
     }
   }
 
@@ -200,13 +234,14 @@ function classifyPals(worldData, playerMetas) {
     if (meta.partyContainerId) byContainer.set(meta.partyContainerId, { where: 'party', owner: meta.playerUid });
   }
   for (const pal of worldData.pals) {
+    if (pal.where) continue; // preset (e.g. dimensional storage)
     const loc = pal.containerId ? byContainer.get(pal.containerId) : null;
     pal.where = loc ? loc.where : (pal.containerId ? 'base/other' : 'unknown');
   }
   return worldData;
 }
 
-const api = { parseLevelSav, parsePlayerSav, extractWorld, extractPlayerMeta, classifyPals };
+const api = { parseLevelSav, parsePlayerSav, extractWorld, extractDpsPals, extractPlayerMeta, classifyPals };
 if (isNode) module.exports = api;
 else globalThis.PalTools = Object.assign(globalThis.PalTools || {}, api);
 

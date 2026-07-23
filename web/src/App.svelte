@@ -42,11 +42,13 @@
     if (!save) return [];
     const pals = save.world.pals;
     const count = (w: string) => pals.filter(p => p.where === w).length;
+    const dps = count('dps');
     return [
       ['Total pals', pals.length],
       ['In palbox', count('palbox')],
       ['In parties', count('party')],
       ['At bases', count('base/other')],
+      ...(dps ? [['Dim. storage', dps] as [string, number]] : []),
       ['Species', new Set(pals.map(p => p.species)).size],
       ['Alphas', pals.filter(p => p.isAlpha).length],
       ['Lucky', pals.filter(p => p.isLucky).length],
