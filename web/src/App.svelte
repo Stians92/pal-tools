@@ -5,7 +5,6 @@
   import Coverage from './lib/Coverage.svelte';
   import MapView from './lib/MapView.svelte';
   import type { LoadedSave } from './lib/paltools';
-  import { initWorld, restore, persist } from './lib/uistate';
 
   type Tab = 'palbox' | 'breeding' | 'coverage' | 'map';
   const urlTab = new URLSearchParams(location.search).get('tab');
@@ -16,21 +15,6 @@
   // switching tabs. A reload still starts fresh.
   let visited = $state<Record<Tab, boolean>>({ palbox: false, breeding: false, coverage: false, map: false });
   $effect(() => { visited[tab] = true; });
-
-  // Persist app-level state per world; restore when the SAME world is
-  // re-dropped after a refresh (URL params win over restored state)
-  function onSaveLoaded(s: LoadedSave) {
-    const key = s.loadedFrom + '|' + s.world.players.map(p => p.uid).sort().join(',');
-    initWorld(key);
-    const st = restore<{ tab: Tab; breedTarget: string; ownerFilter: string }>('app');
-    if (st) {
-      if (!urlTab) tab = st.tab;
-      if (!new URLSearchParams(location.search).get('target')) breedTarget = st.breedTarget;
-      ownerFilter = st.ownerFilter ?? '';
-    }
-    save = s;
-  }
-  $effect(() => { if (save) persist('app', { tab, breedTarget, ownerFilter }); });
   let breedTarget = $state(new URLSearchParams(location.search).get('target') ?? '');
   let ownerFilter = $state('');
 
@@ -113,7 +97,7 @@
 
 <main>
   {#if !save}
-    <SaveLoader onloaded={onSaveLoaded} />
+    <SaveLoader onloaded={(s) => (save = s)} />
   {:else}
     <div class="summary">
       {#each stats as [label, n]}

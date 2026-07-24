@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { Player, PlayerMeta } from './paltools';
   import { speciesName, speciesIcon } from './breeding';
-  import { restore, persist } from './uistate';
   import relicsRaw from '../data/relics.json';
   import markersData from '../data/markers.json';
   import paldbRaw from '../data/paldb-markers.json';
@@ -56,17 +55,12 @@
   const relicTypes = [...new Set(relics.map(r => r.type))].sort();
 
   // ---- state ----
-  const saved = restore<{
-    playerUid: string; area: AreaKey; showDone: boolean; relicTypeFilter: string;
-    materialFilter: string; enabled: Record<string, boolean>;
-    scale: number; tx: number; ty: number;
-  }>('map');
-  let playerUid = $state(saved?.playerUid ?? metas[0]?.playerUid ?? '');
-  let area = $state<AreaKey>(saved?.area ?? 'main');
-  let showDone = $state(saved?.showDone ?? false);
-  let relicTypeFilter = $state(saved?.relicTypeFilter ?? '');
-  let materialFilter = $state(saved?.materialFilter ?? '');
-  let enabled = $state<Record<string, boolean>>(saved?.enabled ?? {
+  let playerUid = $state(metas[0]?.playerUid ?? '');
+  let area = $state<AreaKey>('main');
+  let showDone = $state(false);
+  let relicTypeFilter = $state('');
+  let materialFilter = $state('');
+  let enabled = $state<Record<string, boolean>>({
     relics: true, fastTravel: true, alphas: true, dungeons: false, predators: false,
     chests: false, eggs: false, skillFruits: false, journals: true,
     materials: false, npcs: false, supply: false, fishing: false,
@@ -242,15 +236,10 @@
 
   // ---- pan/zoom ----
   let viewport: HTMLDivElement;
-  let scale = $state(saved?.scale ?? 1);
-  let tx = $state(saved?.tx ?? 0);
-  let ty = $state(saved?.ty ?? 0);
+  let scale = $state(1);
+  let tx = $state(0);
+  let ty = $state(0);
   let dragging = false, lastX = 0, lastY = 0;
-
-  $effect(() => {
-    // spread `enabled` so per-category toggles are tracked (mutated in place)
-    persist('map', { playerUid, area, showDone, relicTypeFilter, materialFilter, enabled: { ...enabled }, scale, tx, ty });
-  });
 
   function clamp() {
     const w = viewport?.clientWidth ?? 0, h = viewport?.clientHeight ?? 0;

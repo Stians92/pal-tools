@@ -5,16 +5,13 @@
     type Reachability,
   } from './breeding';
   import SpeciesCard from './SpeciesCard.svelte';
-  import { restore, persist } from './uistate';
 
   let { pals, ongoto }: { pals: Pal[]; ongoto: (targetId: string) => void } = $props();
 
-  const saved = restore<{ search: string; showOwned: boolean; selected: string }>('coverage');
-  const urlSel = import.meta.env.DEV ? new URLSearchParams(location.search).get('sel') : null;
-  let search = $state(saved?.search ?? '');
-  let showOwned = $state(saved?.showOwned ?? false);
-  let selected = $state(urlSel ?? saved?.selected ?? '');
-  $effect(() => { persist('coverage', { search, showOwned, selected }); });
+  let search = $state('');
+  let showOwned = $state(false);
+  let selected = $state(
+    import.meta.env.DEV ? new URLSearchParams(location.search).get('sel') ?? '' : '');
 
   const breedable = $derived(pals.filter(p => p.gender === 'Male' || p.gender === 'Female'));
   const ownedIds = $derived([...new Set(breedable.map(p => palSpeciesId(p)))]);
