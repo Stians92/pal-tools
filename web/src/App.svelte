@@ -10,6 +10,11 @@
   const urlTab = new URLSearchParams(location.search).get('tab');
   let save = $state<LoadedSave | null>(null);
   let tab = $state<Tab>(urlTab === 'breeding' || urlTab === 'coverage' || urlTab === 'map' ? urlTab : 'palbox');
+  // Tabs stay mounted once visited (hidden, not destroyed) so their local
+  // state — search fields, selected passives, map position — survives
+  // switching tabs. A reload still starts fresh.
+  let visited = $state<Record<Tab, boolean>>({ palbox: false, breeding: false, coverage: false, map: false });
+  $effect(() => { visited[tab] = true; });
   let breedTarget = $state(new URLSearchParams(location.search).get('target') ?? '');
   let ownerFilter = $state('');
 
@@ -110,15 +115,26 @@
         </div>
       {/if}
     </div>
-    {#if tab === 'palbox'}
-      <PalTable pals={save.world.pals} players={save.world.players}
-                ongoto={(id) => { breedTarget = id; tab = 'breeding'; }} />
-    {:else if tab === 'breeding'}
-      <Breeding pals={scopedPals} players={save.world.players} bind:targetId={breedTarget} />
-    {:else if tab === 'coverage'}
-      <Coverage pals={scopedPals} ongoto={(id) => { breedTarget = id; tab = 'breeding'; }} />
-    {:else}
-      <MapView players={save.world.players} metas={save.metas} />
+    {#if visited.palbox}
+      <div class="pane" style:display={tab === 'palbox' ? 'contents' : 'none'}>
+        <PalTable pals={save.world.pals} players={save.world.players}
+                  ongoto={(id) => { breedTarget = id; tab = 'breeding'; }} />
+      </div>
+    {/if}
+    {#if visited.breeding}
+      <div class="pane" style:display={tab === 'breeding' ? 'contents' : 'none'}>
+        <Breeding pals={scopedPals} players={save.world.players} bind:targetId={breedTarget} />
+      </div>
+    {/if}
+    {#if visited.coverage}
+      <div class="pane" style:display={tab === 'coverage' ? 'contents' : 'none'}>
+        <Coverage pals={scopedPals} ongoto={(id) => { breedTarget = id; tab = 'breeding'; }} />
+      </div>
+    {/if}
+    {#if visited.map}
+      <div class="pane" style:display={tab === 'map' ? 'contents' : 'none'}>
+        <MapView players={save.world.players} metas={save.metas} />
+      </div>
     {/if}
   {/if}
 </main>
