@@ -85,7 +85,7 @@ label { color: var(--text-2); display: inline-flex; align-items: center; gap: 6p
 input[type="checkbox"] { accent-color: var(--accent); }
 
 table { border-collapse: collapse; width: 100%; background: var(--panel); }
-th, td { padding: 8px 12px; text-align: left; white-space: nowrap; }
+th, td { padding: 7px 9px; text-align: left; white-space: nowrap; }
 td { border-top: 1px solid var(--border-soft); }
 th {
   background: var(--panel2); color: var(--muted); font-size: 11.5px;

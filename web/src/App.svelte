@@ -158,7 +158,7 @@
   nav button.themebtn { padding: 6px 8px; line-height: 0; }
   nav button.themebtn svg { width: 18px; height: 18px; }
   main {
-    padding: 20px 24px; max-width: 1400px; margin: 0 auto; width: 100%;
+    padding: 20px 24px; max-width: 1840px; margin: 0 auto; width: 100%;
     flex: 1; min-height: 0;
     display: flex; flex-direction: column;
     overflow-y: auto; /* single scroll surface for tall tabs */

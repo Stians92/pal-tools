@@ -159,7 +159,7 @@
             </td>
           {/each}
           <td class="num">{souls(p) || ''}</td>
-          <td title={p.passives.join(', ')}>
+          <td class="pvcell" title={p.passives.join(', ')}>
             {#each sortPassivesByRank(p.passives) as ps (ps)}<Passive id={ps} />{/each}
           </td>
           <td class="muted">{ownerName(p.ownerUid)}</td>
@@ -188,6 +188,8 @@
     flex: 1; min-height: 0; /* fill remaining viewport; scroll inside */
   }
   .palrow { cursor: pointer; }
+  /* passives wrap to a second row instead of widening the table */
+  .pvcell { white-space: normal; max-width: 400px; min-width: 230px; }
   .elcell { white-space: nowrap; }
   .elmini {
     display: inline-flex; align-items: center; gap: 4px;
