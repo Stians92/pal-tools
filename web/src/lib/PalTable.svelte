@@ -4,6 +4,7 @@
   import { EL_COLOR, EL_ICON } from './elements';
   import Passive from './Passive.svelte';
   import PalDetail from './PalDetail.svelte';
+  import { restore, persist } from './uistate';
 
   let { pals, players, ongoto }: {
     pals: Pal[]; players: Player[]; ongoto?: (targetId: string) => void;
@@ -20,14 +21,19 @@
     }
   });
 
-  let search = $state('');
-  let fWhere = $state('');
-  let fOwner = $state('');
-  let fAlpha = $state(false);
-  let fLucky = $state(false);
-  let fPassive = $state('');
-  let sortKey = $state('level');
-  let sortDir = $state(-1);
+  const saved = restore<{
+    search: string; fWhere: string; fOwner: string; fAlpha: boolean;
+    fLucky: boolean; fPassive: string; sortKey: string; sortDir: number;
+  }>('palbox');
+  let search = $state(saved?.search ?? '');
+  let fWhere = $state(saved?.fWhere ?? '');
+  let fOwner = $state(saved?.fOwner ?? '');
+  let fAlpha = $state(saved?.fAlpha ?? false);
+  let fLucky = $state(saved?.fLucky ?? false);
+  let fPassive = $state(saved?.fPassive ?? '');
+  let sortKey = $state(saved?.sortKey ?? 'level');
+  let sortDir = $state(saved?.sortDir ?? -1);
+  $effect(() => { persist('palbox', { search, fWhere, fOwner, fAlpha, fLucky, fPassive, sortKey, sortDir }); });
 
   const souls = (p: Pal) => p.rankHp + p.rankAttack + p.rankDefence + p.rankCraftSpeed;
 

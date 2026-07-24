@@ -7,15 +7,20 @@
     type BreedingPair, type BreedingPlan, type PassivePlan, type PassiveRouteSet,
   } from './breeding';
   import Passive from './Passive.svelte';
+  import { restore, persist } from './uistate';
 
   let { pals, players, targetId = $bindable(new URLSearchParams(location.search).get('target') ?? '') }:
     { pals: Pal[]; players: Player[]; targetId?: string } = $props();
-  let targetQuery = $state('');
+
+  const saved = restore<{ targetQuery: string; desired: string[]; passiveQuery: string; maxRows: number }>('breeding');
   // dev-only ?want=<id,id> preselects passives for screenshot tests
-  let desired = $state<string[]>(
-    import.meta.env.DEV ? new URLSearchParams(location.search).get('want')?.split(',').filter(Boolean) ?? [] : []);
-  let passiveQuery = $state('');
-  let maxRows = $state(100);
+  const urlWant = import.meta.env.DEV
+    ? new URLSearchParams(location.search).get('want')?.split(',').filter(Boolean) : undefined;
+  let targetQuery = $state(saved?.targetQuery ?? '');
+  let desired = $state<string[]>(urlWant ?? saved?.desired ?? []);
+  let passiveQuery = $state(saved?.passiveQuery ?? '');
+  let maxRows = $state(saved?.maxRows ?? 100);
+  $effect(() => { persist('breeding', { targetQuery, desired, passiveQuery, maxRows }); });
 
   const breedable = $derived(pals.filter(p => p.gender === 'Male' || p.gender === 'Female'));
 
