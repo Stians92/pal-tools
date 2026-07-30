@@ -88,6 +88,20 @@ Pushes to `main` build and deploy to [Cloudflare Pages](https://pal-tools.pages.
 via GitHub Actions (`.github/workflows/deploy.yml`); pull requests get preview
 deployments on branch URLs.
 
+## Acknowledgements
+
+- [deafdudecomputers/PalworldSaveTools](https://github.com/deafdudecomputers/PalworldSaveTools) —
+  the project that inspired this one; its feature set defined the scope
+  (see `docs/feature-scope.md`). No code was reused, but the idea was.
+- [cheahjs/palworld-save-tools](https://github.com/cheahjs/palworld-save-tools) —
+  the GVAS/Palworld save-format knowledge distilled into `docs/gvas-spec.md`
+  that made a from-scratch parser feasible.
+- [powzix/ooz](https://github.com/powzix/ooz) — the open-source Oodle
+  reimplementation `src/oodle.js` is ported from.
+- [tylercamp/palcalc](https://github.com/tylercamp/palcalc),
+  [oMaN-Rod/palworld-save-pal](https://github.com/oMaN-Rod/palworld-save-pal),
+  and [paldb.cc](https://paldb.cc) — vendored game data (see above).
+
 ## License
 
 [GPL-3.0](LICENSE). `src/oodle.js` is a derivative of
