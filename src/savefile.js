@@ -57,7 +57,9 @@ function decompressSav(u8) {
 function oodleDecompress(payload, len) { return oodleDecompressFn(payload, len); }
 
 const api = { parseSavHeader, decompressSav };
+// Always register the browser global — bundlers wrap this file as CJS, which
+// makes `module` exist in the browser too, so an if/else here would skip it.
+globalThis.PalTools = Object.assign(globalThis.PalTools || {}, api);
 if (isNode) module.exports = api;
-else globalThis.PalTools = Object.assign(globalThis.PalTools || {}, api);
 
 })();

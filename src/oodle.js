@@ -3000,10 +3000,11 @@ function oodleDecompress(srcBytes, dstLen) {
   return out;
 }
 
+// Always register the browser global — bundlers wrap this file as CJS, which
+// makes `module` exist in the browser too, so an if/else here would skip it.
+(globalThis.PalTools = globalThis.PalTools || {}).oodleDecompress = oodleDecompress;
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = { oodleDecompress };
-} else {
-  (globalThis.PalTools = globalThis.PalTools || {}).oodleDecompress = oodleDecompress;
 }
 
 })();

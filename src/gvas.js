@@ -378,10 +378,11 @@ const api = {
   parseCharacterContainerSlotRawData,
 };
 
+// Always register the browser global — bundlers wrap this file as CJS, which
+// makes `module` exist in the browser too, so an if/else here would skip it.
+globalThis.PalTools = Object.assign(globalThis.PalTools || {}, api);
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = api;
-} else {
-  globalThis.PalTools = Object.assign(globalThis.PalTools || {}, api);
 }
 
 })();
