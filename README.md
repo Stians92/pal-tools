@@ -1,6 +1,11 @@
 # Pal Tools
 
+[![Deploy](https://github.com/Stians92/pal-tools/actions/workflows/deploy.yml/badge.svg)](https://github.com/Stians92/pal-tools/actions/workflows/deploy.yml)
+
 Palworld **palbox viewer + breeding calculator** web app.
+
+**Live at [pal-tools.pages.dev](https://pal-tools.pages.dev)** — drop your save
+folder on the page; everything is parsed in your browser and nothing is uploaded.
 
 - Save-file parsing is 100% from scratch (no external parser): a hand-ported
   Oodle Kraken/Mermaid decompressor + GVAS parser in plain JS (`src/`).
@@ -32,7 +37,20 @@ onto the page. Everything runs locally; nothing is uploaded.
 - **Breeding tab** — pick a target species and wanted passives: shows every
   (male, female) pair you own that produces it, with the probability an egg
   directly inherits all wanted passives; if no direct pair exists, shows a
-  multi-step breeding route from your owned species.
+  multi-step breeding route from your owned species. Passive-carrier chain
+  planner: shortest route that keeps a carrier of all wanted passives in every
+  pair, with per-step inherit odds and expected egg counts.
+- **Coverage tab** — every species in the dex, tiered by the minimum number of
+  breeds needed to reach it from your box; click through to a species baseline
+  card (stats, elements, partner gear, work suitability) and the planner.
+- **Map tab** — world + Sakurajima maps with save-aware markers: collected
+  relics, unlocked fast travel, defeated alphas/tower bosses, read journals,
+  plus dungeons, predators, chests, eggs, NPCs and more.
+- **Pal detail** — click any palbox row: IVs, souls, passives, species stat
+  bars, and every mate pairing with what it produces (owned/new filters).
+
+Dimensional Pal Storage (`*_dps.sav`) is parsed too — DPS pals feed the
+breeding and coverage calculations automatically.
 
 CLI: `node test/extract-pals.js <save-dir>` writes `pals.json`.
 
@@ -63,3 +81,18 @@ After a game patch: re-download palcalc's `db.json`/`breeding.json` into
 - `test/` — Node tests for the parser, browser smoke test, static server.
 - `index.html` (repo root) — the original no-build vanilla JS viewer; still
   works, superseded by `web/`.
+
+## Deployment
+
+Pushes to `main` build and deploy to [Cloudflare Pages](https://pal-tools.pages.dev)
+via GitHub Actions (`.github/workflows/deploy.yml`); pull requests get preview
+deployments on branch URLs.
+
+## License
+
+[GPL-3.0](LICENSE). `src/oodle.js` is a derivative of
+[powzix/ooz](https://github.com/powzix/ooz) (GPL-3.0), which makes the combined
+work GPL; the rest of the original code here is released under the same terms.
+Vendored data in `data/vendor/` keeps its upstream licenses (MIT) — see
+attributions above. Palworld and all game data © Pocketpair, Inc.; this project
+is unaffiliated fan tooling.
