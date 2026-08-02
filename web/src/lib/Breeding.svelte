@@ -7,6 +7,8 @@
     type BreedingPair, type BreedingPlan, type BreedingStep, type PassivePlan, type PassiveRouteSet,
   } from './breeding';
   import Passive from './Passive.svelte';
+  import PalDetail from './PalDetail.svelte';
+  import SpeciesDetail from './SpeciesDetail.svelte';
 
   let { pals, players, targetId = $bindable(new URLSearchParams(location.search).get('target') ?? '') }:
     { pals: Pal[]; players: Player[]; targetId?: string } = $props();
@@ -16,6 +18,8 @@
     import.meta.env.DEV ? new URLSearchParams(location.search).get('want')?.split(',').filter(Boolean) ?? [] : []);
   let passiveQuery = $state('');
   let maxRows = $state(100);
+  let selectedPal = $state<Pal | null>(null);
+  let speciesDetail = $state<string | null>(null);
 
   const breedable = $derived(pals.filter(p => p.gender === 'Male' || p.gender === 'Female'));
 
@@ -70,11 +74,19 @@
     `${speciesName(palSpeciesId(p))}${p.nickname ? ` “${p.nickname}”` : ''} Lv${p.level}`;
 </script>
 
+{#snippet targetLink()}
+  <button class="pallink target" title="Show species details"
+          onclick={() => (speciesDetail = targetId)}>
+    <img class="palicon" src={speciesIcon(targetId)} alt="" />
+    {speciesName(targetId)}
+  </button>
+{/snippet}
+
 {#snippet palWithPassives(p: Pal)}
-  <span class="usepal">
+  <button class="pallink usepal" onclick={() => (selectedPal = p)}>
     <img class="palicon sm" src={speciesIcon(palSpeciesId(p))} alt="" loading="lazy" />
     {palLabel(p)}
-  </span>
+  </button>
   {#if p.passives.length}
     {#each sortPassivesByRank(p.passives) as ps (ps)}<Passive id={ps} />{/each}
   {:else}
@@ -181,8 +193,7 @@
     {:else if pairs.length}
       <h3>
         {pairs.length} direct pairs →
-        <img class="palicon" src={speciesIcon(targetId)} alt="" />
-        {speciesName(targetId)}
+        {@render targetLink()}
       </h3>
       <div class="tablewrap">
         <table>
@@ -198,12 +209,16 @@
             {#each pairs.slice(0, maxRows) as pair}
               <tr>
                 <td title={pair.father.passives.map(passiveName).join(', ')}>
-                  <img class="palicon sm" src={speciesIcon(palSpeciesId(pair.father))} alt="" loading="lazy" />
-                  {palLabel(pair.father)}
+                  <button class="pallink" onclick={() => (selectedPal = pair.father)}>
+                    <img class="palicon sm" src={speciesIcon(palSpeciesId(pair.father))} alt="" loading="lazy" />
+                    {palLabel(pair.father)}
+                  </button>
                 </td>
                 <td title={pair.mother.passives.map(passiveName).join(', ')}>
-                  <img class="palicon sm" src={speciesIcon(palSpeciesId(pair.mother))} alt="" loading="lazy" />
-                  {palLabel(pair.mother)}
+                  <button class="pallink" onclick={() => (selectedPal = pair.mother)}>
+                    <img class="palicon sm" src={speciesIcon(palSpeciesId(pair.mother))} alt="" loading="lazy" />
+                    {palLabel(pair.mother)}
+                  </button>
                 </td>
                 <td class="small">
                   {#each sortPassivesByRank(pair.pool) as ps (ps)}<Passive id={ps} />{/each}
@@ -228,8 +243,7 @@
       {#if passiveRoutes && passiveRoutes.shortest && passiveRoutes.shortest.steps.length}
         <h3>
           Carry {desired.map(passiveName).join(' + ')} to
-          <img class="palicon" src={speciesIcon(targetId)} alt="" />
-          {speciesName(targetId)}
+          {@render targetLink()}
         </h3>
         {#if passiveRoutes.cleanest}
           <h4 class="routehead">Fewest breeds — {passiveRoutes.shortest.steps.length}</h4>
@@ -306,6 +320,14 @@
   </section>
 </div>
 
+{#if selectedPal}
+  <PalDetail pal={selectedPal} {pals} {players} onclose={() => (selectedPal = null)}
+             ongoto={(id) => { selectedPal = null; targetId = id; }} />
+{/if}
+{#if speciesDetail}
+  <SpeciesDetail speciesId={speciesDetail} onclose={() => (speciesDetail = null)} />
+{/if}
+
 <style>
   .breeding { display: grid; grid-template-columns: 340px 1fr; gap: 20px; align-items: start; }
   @media (max-width: 900px) { .breeding { grid-template-columns: 1fr; } }
@@ -369,4 +391,12 @@
     padding-left: 32px; font-size: 12px;
   }
   .usepal { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; }
+  .pallink {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: none; border: none; padding: 2px 7px; margin: -2px -7px;
+    border-radius: 8px; color: var(--text); font: inherit; text-align: left;
+    cursor: pointer;
+  }
+  .pallink:hover { background: var(--accent-soft); color: var(--accent); }
+  .pallink.target { font: inherit; font-weight: inherit; margin: -2px 0; }
 </style>
