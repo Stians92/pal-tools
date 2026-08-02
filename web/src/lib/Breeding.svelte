@@ -3,8 +3,8 @@
   import {
     allSpecies, allPassives, speciesName, passiveName, palSpeciesId, speciesIcon,
     sortPassivesByRank,
-    findPairs, planBreeding, planPassiveRoutes,
-    type BreedingPair, type BreedingPlan, type PassivePlan, type PassiveRouteSet,
+    findPairs, planBreeding, planPassiveRoutes, specialParentsOf, isComboOnly,
+    type BreedingPair, type BreedingPlan, type BreedingStep, type PassivePlan, type PassiveRouteSet,
   } from './breeding';
   import Passive from './Passive.svelte';
 
@@ -47,6 +47,12 @@
   const plan = $derived.by((): BreedingPlan | null =>
     targetId && !desired.length && pairs.length === 0 ? planBreeding(ownedSpecies, targetId) : null);
 
+  // target owned but no breedable pair: route to another copy from the rest of the box
+  const morePlan = $derived.by((): BreedingPlan | null =>
+    plan && plan.steps.length === 0
+      ? planBreeding(ownedSpecies.filter(o => o.toLowerCase() !== plan.target.toLowerCase()), targetId)
+      : null);
+
 
   function togglePassive(id: string) {
     desired = desired.includes(id)
@@ -74,6 +80,26 @@
   {:else}
     <span class="muted">no passives</span>
   {/if}
+{/snippet}
+
+{#snippet routeList(steps: BreedingStep[])}
+  <ol class="plan">
+    {#each steps as step, i}
+      <li>
+        <span class="stepno">{i + 1}</span>
+        <span class="pair">
+          <img class="palicon sm" src={speciesIcon(step.parentA)} alt="" />
+          {speciesName(step.parentA)} <span class="muted">+</span>
+          <img class="palicon sm" src={speciesIcon(step.parentB)} alt="" />
+          {speciesName(step.parentB)}
+        </span>
+        <span class="arrow">→</span>
+        <img class="palicon sm" src={speciesIcon(step.child)} alt="" />
+        <strong>{speciesName(step.child)}</strong>
+      </li>
+    {/each}
+  </ol>
+  <p class="muted">Species-level route from what you own; each step assumes you can get the bred pal in the needed gender.</p>
 {/snippet}
 
 {#snippet chainBlock(plan: PassivePlan)}
@@ -247,28 +273,28 @@
         </p>
       {/if}
     {:else if plan && plan.steps.length === 0}
-      <h3>Already owned</h3>
-      <p class="muted">You already own {speciesName(targetId)} — select passives to plan
-        moving a trait onto it, or check your pairs in the palbox.</p>
+      {#if morePlan && morePlan.steps.length}
+        <h3>Already owned — breed another ({morePlan.steps.length} step{morePlan.steps.length === 1 ? '' : 's'})</h3>
+        <p class="muted">You own {speciesName(targetId)} but no breedable pair produces it directly —
+          here's a route to another one from the rest of your box. You can also select passives
+          to plan moving a trait onto it.</p>
+        {@render routeList(morePlan.steps)}
+      {:else}
+        <h3>Already owned — can't breed more yet</h3>
+        <p class="muted">
+          You own {speciesName(targetId)}, but no pair in your box produces another one.
+          {#if specialParentsOf(targetId).length}
+            It {isComboOnly(targetId) ? 'only comes' : 'comes'} from
+            {#each specialParentsOf(targetId) as [a, b], i}{#if i}<span> or </span>{/if}<strong>{speciesName(a)} + {speciesName(b)}</strong>{/each}
+            or a same-species pair — catch the missing parents (or a second {speciesName(targetId)}).
+          {:else}
+            You'll need a second one for a same-species pair, or catch the pals that breed into it.
+          {/if}
+        </p>
+      {/if}
     {:else if plan}
       <h3>No direct pair — multi-step route ({plan.steps.length} steps)</h3>
-      <ol class="plan">
-        {#each plan.steps as step, i}
-          <li>
-            <span class="stepno">{i + 1}</span>
-            <span class="pair">
-              <img class="palicon sm" src={speciesIcon(step.parentA)} alt="" />
-              {speciesName(step.parentA)} <span class="muted">+</span>
-              <img class="palicon sm" src={speciesIcon(step.parentB)} alt="" />
-              {speciesName(step.parentB)}
-            </span>
-            <span class="arrow">→</span>
-            <img class="palicon sm" src={speciesIcon(step.child)} alt="" />
-            <strong>{speciesName(step.child)}</strong>
-          </li>
-        {/each}
-      </ol>
-      <p class="muted">Species-level route from what you own; each step assumes you can get the bred pal in the needed gender.</p>
+      {@render routeList(plan.steps)}
     {:else}
       <h3>Not reachable</h3>
       <p class="muted">

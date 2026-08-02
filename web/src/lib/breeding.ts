@@ -148,6 +148,27 @@ export function matesFor(speciesId: string, gender?: Gender | null): MateOption[
   return out;
 }
 
+/** Special parent pairs (unique or gendered combos) whose child is this species. */
+export function specialParentsOf(targetId: string): [string, string][] {
+  const t = speciesById(targetId);
+  if (!t) return [];
+  const tl = t.id.toLowerCase();
+  const out: [string, string][] = [];
+  for (const [key, child] of uniqueMap)
+    if (child.toLowerCase() === tl) out.push(key.split('|') as [string, string]);
+  for (const g of genderedCombos)
+    if (g.child.toLowerCase() === tl && !out.some(([a, b]) => comboKey(a, b) === comboKey(g.a, g.b)))
+      out.push([g.a, g.b]);
+  return out;
+}
+
+/** True when the species can never result from the rank formula — it only comes
+    from a special combo or a same-species pair. */
+export const isComboOnly = (id: string): boolean => {
+  const s = speciesById(id);
+  return !!s && excluded.has(s.id);
+};
+
 // ---- passive inheritance probability ----------------------------------------------
 
 const P_FROM_PARENTS: number[] = data.inheritance.fromParents; // exactly N of pool, N=1..4
