@@ -52,6 +52,7 @@ function palFromSaveParameter(p, base) {
     species: characterId.replace(/^BOSS_/i, '').replace(/^PREDATOR_/i, ''),
     isAlpha: /^BOSS_/i.test(characterId),
     isLucky: !!(p.IsRarePal && p.IsRarePal.value),
+    isAwakened: !!(p.bIsAwakening && p.bIsAwakening.value),
     gender,
     rank: num(p, 'Rank', 1),
     rankHp: num(p, 'Rank_HP', 0),

@@ -25,6 +25,7 @@
   let fOwner = $state('');
   let fAlpha = $state(false);
   let fLucky = $state(false);
+  let fAwakened = $state(false);
   let fPassive = $state('');
   let sortKey = $state('level');
   let sortDir = $state(-1);
@@ -61,6 +62,7 @@
       (!fOwner || p.ownerUid === fOwner) &&
       (!fAlpha || p.isAlpha) &&
       (!fLucky || p.isLucky) &&
+      (!fAwakened || p.isAwakened) &&
       (!fPassive || p.passives.includes(fPassive)));
     return filtered.sort((a, b) => {
       const va = sortVal(a, sortKey), vb = sortVal(b, sortKey);
@@ -102,6 +104,7 @@
   </select>
   <label><input type="checkbox" bind:checked={fAlpha} /> Alpha</label>
   <label><input type="checkbox" bind:checked={fLucky} /> Lucky</label>
+  <label><input type="checkbox" bind:checked={fAwakened} /> Awakened</label>
   <span class="muted">{rows.length} shown</span>
 </div>
 
@@ -126,6 +129,7 @@
             {speciesName(p.species)}
             {#if p.isAlpha}<span class="tag alpha" title="Alpha">α</span>{/if}
             {#if p.isLucky}<span class="tag lucky" title="Lucky">✦</span>{/if}
+            {#if p.isAwakened}<span class="tag awakened" title="Awakened">❂</span>{/if}
           </td>
           <td class="elcell">
             {#each elementsOf(p) as el}

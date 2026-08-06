@@ -69,6 +69,7 @@
       ['Species', new Set(pals.map(p => p.species)).size],
       ['Alphas', pals.filter(p => p.isAlpha).length],
       ['Lucky', pals.filter(p => p.isLucky).length],
+      ['Awakened', pals.filter(p => p.isAwakened).length],
       ['Players', save.world.players.length],
     ] as [string, number][];
   });

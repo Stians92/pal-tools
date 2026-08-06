@@ -46,6 +46,7 @@
 
 :root[data-theme="light"] .tag.alpha { background: #a03050; color: #fff; }
 :root[data-theme="light"] .tag.lucky { background: #b8860b; color: #fff; }
+:root[data-theme="light"] .tag.awakened { background: #7a52c7; color: #fff; }
 :root[data-theme="light"] .tag.party { background: #1f5c8a; color: #dbeeff; }
 :root[data-theme="light"] .tag.base { background: #3d6b3f; color: #dcf5dd; }
 :root[data-theme="light"] .tag.dps { background: #5c4791; color: #efe8ff; }
@@ -103,6 +104,7 @@ td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
 }
 .tag.alpha { background: #7e2743; color: #ffd9e2; }
 .tag.lucky { background: #8a6510; color: #ffe9b3; }
+.tag.awakened { background: #5b3d8f; color: #e6d5ff; }
 .tag.palbox { background: var(--panel2); color: var(--text-2); border: 1px solid var(--border-soft); }
 .tag.party { background: #1c4a70; color: #cfe8ff; }
 .tag.base { background: #2e5431; color: #d3f0d6; }

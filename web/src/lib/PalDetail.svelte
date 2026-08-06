@@ -83,6 +83,7 @@
           </span>
           {#if pal.isAlpha}<span class="badge alpha">α Alpha</span>{/if}
           {#if pal.isLucky}<span class="badge lucky">✦ Lucky</span>{/if}
+          {#if pal.isAwakened}<span class="badge awakened">❂ Awakened</span>{/if}
           {#if sp?.nocturnal}<span class="badge">🌙 Nocturnal</span>{/if}
           {#if sp}<span class="badge">Size {sp.size}</span>{/if}
           {#if sp && sp.wild[1] > 0}<span class="badge">Wild Lv {sp.wild[0]}–{sp.wild[1]}</span>{/if}
@@ -193,6 +194,7 @@
   .badge.gf { color: #f78ab0; }
   .badge.alpha { background: #7e2743; color: #ffd9e2; border-color: transparent; }
   .badge.lucky { background: #8a6510; color: #ffe9b3; border-color: transparent; }
+  .badge.awakened { background: #5b3d8f; color: #e6d5ff; border-color: transparent; }
   .badge.common { color: var(--text-2); }
   .badge.rare { color: #6db9ff; border-color: #2c5b86; }
   .badge.epic { color: #c49bff; border-color: #5d3f8f; }

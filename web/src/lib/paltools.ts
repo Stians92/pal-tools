@@ -24,6 +24,7 @@ export interface Pal {
   species: string;
   isAlpha: boolean;
   isLucky: boolean;
+  isAwakened: boolean;
   gender: 'Male' | 'Female' | null;
   rank: number;
   rankHp: number;
