@@ -149,8 +149,8 @@
     {/each}
   </ol>
   <p class="chainstats muted">
-    Whole chain ≈ <strong>{pct(plan.overall)}</strong> straight through ·
-    expect around <strong>{Math.ceil(plan.expectedEggs)} eggs</strong> total when re-rolling each step.
+    Expect around <strong>{Math.ceil(plan.expectedEggs)} eggs</strong> in total,
+    retrying each step until its egg inherits the passive.
   </p>
 {/snippet}
 

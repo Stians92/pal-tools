@@ -72,7 +72,7 @@
     </svg>
     <div>
       <h1>Pal Tools</h1>
-      <span class="sub">Palbox &amp; breeding calculator · everything stays on your machine</span>
+      <span class="sub">Palbox viewer &amp; breeding route planner for your Palworld saves</span>
     </div>
   </div>
   <nav>

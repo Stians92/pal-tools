@@ -7,7 +7,6 @@
   let error = $state(false);
   let hover = $state(false);
   let dirInput: HTMLInputElement;
-  let fileInput: HTMLInputElement;
 
   type Entry = { path: string; file: File };
 
@@ -114,14 +113,11 @@
     <path d="M12 9v6M9 12h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
   </svg>
   <p class="lead"><strong>Drop your Palworld save folder anywhere on this page</strong></p>
-  <p class="muted">or the <code>Level.sav</code> plus <code>Players/*.sav</code> files —
-    typically <code>%LOCALAPPDATA%\Pal\Saved\SaveGames\&lt;steamid&gt;\&lt;worldid&gt;\</code></p>
+  <p class="muted">Find it at <code>%LOCALAPPDATA%\Pal\Saved\SaveGames</code><br />
+    (if you drop the whole SaveGames folder, the newest world will be chosen)</p>
   <button class="primary" onclick={() => dirInput.click()}>Choose save folder</button>
-  <button onclick={() => fileInput.click()}>Choose files</button>
   <p class="muted small">Everything runs locally in your browser — nothing is uploaded.</p>
   <input type="file" bind:this={dirInput} webkitdirectory style="display:none"
-         onchange={(e) => load(fromFileList((e.target as HTMLInputElement).files))} />
-  <input type="file" bind:this={fileInput} multiple style="display:none"
          onchange={(e) => load(fromFileList((e.target as HTMLInputElement).files))} />
 </div>
 {#if status}
