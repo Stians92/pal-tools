@@ -4,7 +4,7 @@
   import Breeding from './lib/Breeding.svelte';
   import Coverage from './lib/Coverage.svelte';
   import MapView from './lib/MapView.svelte';
-  import type { LoadedSave } from './lib/paltools';
+  import { serializeExport, type LoadedSave } from './lib/paltools';
 
   type Tab = 'palbox' | 'breeding' | 'coverage' | 'map';
   const urlTab = new URLSearchParams(location.search).get('tab');
@@ -17,6 +17,18 @@
   $effect(() => { visited[tab] = true; });
   let breedTarget = $state(new URLSearchParams(location.search).get('target') ?? '');
   let ownerFilter = $state('');
+
+  // portable snapshot of the parsed save — loadable via the dropzone, so a
+  // co-op host can share their box without zipping the real save folder
+  function exportSave() {
+    if (!save) return;
+    const blob = new Blob([serializeExport(save.world.players, save.world.pals, save.metas)],
+      { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'paltools-save.json';
+    a.click();
+  }
 
   let theme = $state(document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
   function toggleTheme() {
@@ -81,6 +93,10 @@
       <button class:active={tab === 'breeding'} onclick={() => (tab = 'breeding')}>Breeding</button>
       <button class:active={tab === 'coverage'} onclick={() => (tab = 'coverage')}>Coverage</button>
       <button class:active={tab === 'map'} onclick={() => (tab = 'map')}>Map</button>
+      <button class="ghost" onclick={exportSave}
+              title="Download the parsed save as JSON — can be loaded back into Pal Tools">
+        Export save
+      </button>
       <button class="ghost" onclick={() => (save = null)}>Load another save</button>
     {/if}
     <button class="themebtn" onclick={toggleTheme}

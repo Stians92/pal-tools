@@ -74,14 +74,6 @@
     else { sortKey = k; sortDir = k === 'level' ? -1 : 1; }
   }
 
-  function exportJson() {
-    const blob = new Blob([JSON.stringify({ players, pals }, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a');
-    a.href = URL.createObjectURL(blob);
-    a.download = 'pals.json';
-    a.click();
-  }
-
   const cols: [string, string, boolean][] = [
     ['species', 'Species', false], ['els', 'Type', false],
     ['nickname', 'Nickname', false], ['level', 'Lv', true],
@@ -111,7 +103,6 @@
   <label><input type="checkbox" bind:checked={fAlpha} /> Alpha</label>
   <label><input type="checkbox" bind:checked={fLucky} /> Lucky</label>
   <span class="muted">{rows.length} shown</span>
-  <button onclick={exportJson}>Export JSON</button>
 </div>
 
 <div class="tablewrap">

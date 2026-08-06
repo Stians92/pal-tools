@@ -108,13 +108,57 @@ export interface LoadedSave {
 }
 
 /**
+ * Portable snapshot of the parsed save, as written by the Palbox tab's
+ * "Export JSON" and accepted back by the save loader. Much smaller than the
+ * real save and needs no decompression, so it's the easy way for a co-op
+ * host to share their box. View/plan-only: it cannot be written back to a
+ * real save.
+ */
+export interface ExportedSave {
+  format: 'paltools';
+  version: 1;
+  players: Player[];
+  pals: Pal[];
+  metas: PlayerMeta[];
+}
+
+export function serializeExport(players: Player[], pals: Pal[], metas: PlayerMeta[]): string {
+  const data: ExportedSave = { format: 'paltools', version: 1, players, pals, metas };
+  return JSON.stringify(data, null, 2);
+}
+
+export function parseExport(text: string): LoadedSave {
+  let data: Partial<ExportedSave>;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    throw new Error('not valid JSON');
+  }
+  if (data?.format !== 'paltools')
+    throw new Error('not a Pal Tools export (missing format tag)');
+  if (!Array.isArray(data.pals) || !Array.isArray(data.players) || !Array.isArray(data.metas))
+    throw new Error('malformed Pal Tools export');
+  return {
+    world: { players: data.players, pals: data.pals, containers: new Map(), guilds: [] },
+    metas: data.metas,
+    loadedFrom: 'JSON export',
+    worldCount: 1,
+  };
+}
+
+/**
  * Load a full save from browser File objects. The drop may be a world folder,
  * or a parent folder containing several worlds and `backup/` snapshots — pick
  * the most recently modified non-backup world and scope Players/ to it.
+ * A Pal Tools JSON export is accepted instead when no Level.sav is present.
  */
 export async function loadSaveFiles(files: { path: string; file: File }[]): Promise<LoadedSave> {
   const candidates = files.filter(f => /(^|\/)Level\.sav$/i.test(f.path));
-  if (!candidates.length) throw new Error('No Level.sav found in the selection');
+  if (!candidates.length) {
+    const json = files.find(f => /\.json$/i.test(f.path));
+    if (json) return parseExport(await json.file.text());
+    throw new Error('No Level.sav found in the selection');
+  }
 
   const isBackup = (p: string) => /(^|\/)backup\//i.test(p);
   const live = candidates.filter(f => !isBackup(f.path));

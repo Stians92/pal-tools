@@ -116,6 +116,7 @@
   <p class="muted">Find it at <code>%LOCALAPPDATA%\Pal\Saved\SaveGames</code><br />
     (if you drop the whole SaveGames folder, the newest world will be chosen)</p>
   <button class="primary" onclick={() => dirInput.click()}>Choose save folder</button>
+  <p class="muted small">Also accepts a save exported from Pal Tools (a <code>paltools-save.json</code> file).</p>
   <p class="muted small">Everything runs locally in your browser — nothing is uploaded.</p>
   <input type="file" bind:this={dirInput} webkitdirectory style="display:none"
          onchange={(e) => load(fromFileList((e.target as HTMLInputElement).files))} />
