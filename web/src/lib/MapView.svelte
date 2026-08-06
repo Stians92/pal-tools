@@ -21,7 +21,6 @@
     fastTravel: { id: string; x: number; y: number; name: string }[];
     alphas: { spawnerId: string; characterId: string; level: number; x: number; y: number }[];
     dungeons: { x: number; y: number }[];
-    predators: { x: number; y: number; pal: string }[];
   };
   interface PaldbMarker { x: number; y: number; area?: string; sub?: string; name?: string; title?: string; noteId?: string | null }
   const pd = paldbRaw as unknown as Record<string, PaldbMarker[]> & { meta: unknown };
@@ -61,7 +60,7 @@
   let relicTypeFilter = $state('');
   let materialFilter = $state('');
   let enabled = $state<Record<string, boolean>>({
-    relics: true, fastTravel: true, alphas: true, dungeons: false, predators: false,
+    relics: true, fastTravel: true, alphas: true, dungeons: false,
     chests: false, eggs: false, skillFruits: false, journals: true,
     materials: false, npcs: false, supply: false, fishing: false,
   });
@@ -136,18 +135,6 @@
         out.push({ key: 'd' + i, ...toFrac(area, d), cls: 'dungeon', done: null, gicon: dIcon, label: `Dungeon entrance — (${gameCoord(d)})` });
       }
     }
-    if (enabled.predators) {
-      for (let i = 0; i < md.predators.length; i++) {
-        const p = md.predators[i];
-        if (!inArea(p)) continue;
-        out.push({
-          key: 'p' + i, ...toFrac(area, p), cls: 'predator', done: null,
-          icon: speciesIcon(p.pal),
-          label: `Predator: ${speciesName(p.pal)} — (${gameCoord(p)})`,
-        });
-      }
-    }
-
     // paldb-sourced categories (paldb.cc; tree-file markers carry area:'tree')
     const pdArea = (m: PaldbMarker) => (m.area === 'tree' ? 'tree' : areaOf(m));
     const addPd = (list: PaldbMarker[], keyPrefix: string, cls: string,
@@ -204,7 +191,6 @@
           { key: 'fastTravel', label: 'Fast travel', glyph: 'ft', icon: gicon('Fast Travel'), total: md.fastTravel.length, done: fGot },
           { key: 'alphas', label: 'Alpha pals', glyph: 'alpha', icon: gicon('Alpha Pal'), total: md.alphas.length, done: aGot },
           { key: 'dungeons', label: 'Dungeons', glyph: 'dungeon', icon: gicon('Dungeon'), total: md.dungeons.length, done: null },
-          { key: 'predators', label: 'Predators', glyph: 'predator', icon: md.predators.length ? speciesIcon(md.predators[0].pal) : null, total: md.predators.length, done: null },
         ],
       },
       {
@@ -385,7 +371,6 @@
   .glyph.ft { background: #7fd4ff; border-radius: 3px; transform: rotate(45deg); }
   .glyph.alpha { background: #ff6b81; }
   .glyph.dungeon { background: #b48cf2; border-radius: 3px; }
-  .glyph.predator { background: #ff9950; }
   .glyph.chest { background: #d9a05b; border-radius: 3px; }
   .glyph.egg { background: #9be8c8; }
   .glyph.fruit { background: #7ed957; }
@@ -428,7 +413,6 @@
     border-radius: 50%; object-fit: cover; background: #101318;
   }
   .marker.img.alpha { box-shadow: 0 0 0 calc(2px / var(--s)) #ff6b81, 0 0 calc(5px / var(--s)) rgba(0,0,0,.8); }
-  .marker.img.predator { box-shadow: 0 0 0 calc(2px / var(--s)) #ff9950, 0 0 calc(5px / var(--s)) rgba(0,0,0,.8); }
   /* in-game marker icons: rendered as-is with a shadow for contrast */
   .marker.gm {
     width: calc(16px / var(--s)); height: calc(16px / var(--s));

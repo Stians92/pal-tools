@@ -45,7 +45,7 @@ onto the page. Everything runs locally; nothing is uploaded.
   card (stats, elements, partner gear, work suitability) and the planner.
 - **Map tab** — world + Sakurajima maps with save-aware markers: collected
   relics, unlocked fast travel, defeated alphas/tower bosses, read journals,
-  plus dungeons, predators, chests, eggs, NPCs and more.
+  plus dungeons, chests, eggs, NPCs and more.
 - **Pal detail** — click any palbox row: IVs, souls, passives, species stat
   bars, and every mate pairing with what it produces (owned/new filters).
 

@@ -20,10 +20,12 @@ const out = {
     x: b.x, y: b.y,
   })),
   dungeons: Object.values(mapObjects).filter(o => o.type === 'dungeon').map(o => ({ x: o.x, y: o.y })),
-  predators: Object.values(mapObjects).filter(o => o.type === 'predator_pal').map(o => ({ x: o.x, y: o.y, pal: o.pal })),
+  // map_objects.json also carries `predator_pal` spawner anchors, but those are
+  // a pre-1.0 mechanic — since 1.0 predators spawn randomly across the map, so
+  // fixed markers would be wrong.
 };
 
 const dest = path.join(__dirname, '..', 'web', 'src', 'data', 'markers.json');
 fs.writeFileSync(dest, JSON.stringify(out));
-console.log(`fastTravel ${out.fastTravel.length}, alphas ${out.alphas.length}, dungeons ${out.dungeons.length}, predators ${out.predators.length}`);
+console.log(`fastTravel ${out.fastTravel.length}, alphas ${out.alphas.length}, dungeons ${out.dungeons.length}`);
 console.log('wrote', dest, `(${(fs.statSync(dest).size / 1024).toFixed(0)} KB)`);
