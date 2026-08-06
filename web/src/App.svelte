@@ -183,7 +183,7 @@
   .summary { display: flex; gap: 10px; flex-wrap: wrap; margin: 0 0 20px; }
   .stat {
     background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 12px 18px; min-width: 118px; flex: 1 1 auto; max-width: 180px;
+    padding: 12px 18px; min-width: 118px; flex: 1 1 auto;
   }
   .stat .n { font-size: 24px; font-weight: 600; line-height: 1.2; }
   .stat .l { color: var(--muted); font-size: 12px; margin-top: 2px; }
