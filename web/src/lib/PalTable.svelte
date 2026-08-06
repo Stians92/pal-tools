@@ -124,8 +124,8 @@
               <img class="palicon" src={speciesIcon(p.species)} alt="" loading="lazy" />
             {/if}
             {speciesName(p.species)}
-            {#if p.isAlpha}<span class="tag alpha">α</span>{/if}
-            {#if p.isLucky}<span class="tag lucky">✦</span>{/if}
+            {#if p.isAlpha}<span class="tag alpha" title="Alpha">α</span>{/if}
+            {#if p.isLucky}<span class="tag lucky" title="Lucky">✦</span>{/if}
           </td>
           <td class="elcell">
             {#each elementsOf(p) as el}
