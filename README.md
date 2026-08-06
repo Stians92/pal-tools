@@ -33,7 +33,7 @@ Drop your save folder (`%LOCALAPPDATA%\Pal\Saved\SaveGames\<steamid>\<worldid>\`
 onto the page. Everything runs locally; nothing is uploaded.
 
 - **Palbox tab** — all pals with level, gender, IVs, souls, passives, location
-  (palbox/party/base), owner; search/filter/sort; JSON export.
+  (palbox/party/base), owner; search/filter/sort.
 - **Breeding tab** — pick a target species and wanted passives: shows every
   (male, female) pair you own that produces it, with the probability an egg
   directly inherits all wanted passives; if no direct pair exists, shows a
@@ -51,6 +51,10 @@ onto the page. Everything runs locally; nothing is uploaded.
 
 Dimensional Pal Storage (`*_dps.sav`) is parsed too — DPS pals feed the
 breeding and coverage calculations automatically.
+
+**Export save** (header) downloads the parsed save as a small JSON snapshot
+that can be dropped back onto the page later — e.g. a co-op host sharing
+their box without zipping the real save folder.
 
 CLI: `node test/extract-pals.js <save-dir>` writes `pals.json`.
 
@@ -79,8 +83,6 @@ After a game patch: re-download palcalc's `db.json`/`breeding.json` into
 - `data/vendor/` — vendored palcalc extracts (MIT).
 - `docs/` — format spec + original feature research.
 - `test/` — Node tests for the parser, browser smoke test, static server.
-- `index.html` (repo root) — the original no-build vanilla JS viewer; still
-  works, superseded by `web/`.
 
 ## Deployment
 

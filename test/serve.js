@@ -7,7 +7,7 @@ const server = http.createServer((req, res) => {
   const urlPath = decodeURIComponent(req.url.split('?')[0]);
   let f = path.normalize(path.join(root, urlPath));
   if (!f.startsWith(root)) { res.writeHead(403); res.end(); return; }
-  if (urlPath === '/' || urlPath === '') f = path.join(root, 'index.html');
+  if (urlPath === '/' || urlPath === '') f = path.join(root, 'test', 'browser-test.html');
   fs.readFile(f, (err, data) => {
     if (err) { res.writeHead(404); res.end('not found'); return; }
     const ext = path.extname(f);
