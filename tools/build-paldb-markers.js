@@ -103,7 +103,9 @@ function joinNoteId(href, title) {
 
 // --- category mapping ---
 const MATERIAL_TYPES = new Set(['Ore', 'Coal', 'Sulfur', 'Pure Quartz', 'Hexolite Quartz', 'Chromite', 'Soralite', 'Nightstar Sand', 'Crude Oil', 'Paloxite']);
-const CHEST_TYPES = new Set(['Treasure', 'Treasure Element', 'Oilrig Treasure', 'Treasure Map']);
+// paldb renamed chest types over time (Treasure → Chest, …); accept both eras.
+const CHEST_TYPES = new Set(['Treasure', 'Chest', 'Treasure Element', 'Chest Element',
+  'Oilrig Treasure', 'Oilrig Chest', 'Oilrig Chest Goal', 'Treasure Map']);
 const NPC_TYPES = new Set(['NPC', 'Wandering Merchant', 'Black Marketeer', 'Pal Merchant']);
 
 const out = {
@@ -123,7 +125,11 @@ function addMarker(m, area) {
   if (area === 'tree') base.area = 'tree';
   const type = m.type;
   if (CHEST_TYPES.has(type)) {
-    out.chests.push({ ...base, sub: type === 'Treasure' ? (m.class ? m.class.replace('map-rarity', 'rarity ') : 'chest') : type.toLowerCase(), name: m.item ?? undefined });
+    const sub =
+      type === 'Treasure' || type === 'Chest' ? (m.class ? m.class.replace('map-rarity', 'rarity ') : 'chest') :
+      type === 'Treasure Element' || type === 'Chest Element' ? 'treasure element' :
+      type === 'Treasure Map' ? 'treasure map' : 'oilrig treasure';
+    out.chests.push({ ...base, sub, name: m.item ?? undefined });
   } else if (/ Egg$/.test(type)) {
     out.eggs.push({ ...base, sub: type.replace(/ Egg$/, '') });
   } else if (type === 'Fruit Tree') {
@@ -138,7 +144,7 @@ function addMarker(m, area) {
     out.npcs.push({ ...base, sub: type, name: m.item ?? undefined });
   } else if (type === 'Supply') {
     out.supply.push(base);
-  } else if (type === 'Fishing' || type === 'Salvage' || type === 'Fishing Spot') {
+  } else if (type === 'Fishing' || type === 'Salvage' || type === 'Fishing Spot' || type === 'Rare Fishing Spot') {
     out.fishing.push({ ...base, sub: type });
   }
   // other types (Alpha Pal, Dungeon, Fast Travel, effigies…) intentionally

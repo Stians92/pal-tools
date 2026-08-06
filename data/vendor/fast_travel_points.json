@@ -11,9 +11,25 @@
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": 69604.09,
     "y": 196989.27,
-    "z": 20226.29,
+    "z": 20218.29,
     "localized_name": "Thawtide Cape",
     "id": "FTPoint113"
+  },
+  "0994C20A46B5522FE17090973C3C5452": {
+    "class": "BP_LevelObject_TowerFastTravelPoint_C",
+    "x": 192505.83,
+    "y": -227006.47,
+    "z": 6371.88,
+    "localized_name": "Foot of the World Tree",
+    "id": "FootOfWorldTree"
+  },
+  "0C0AF9F34C0491BCAD80B1BF355B9A98": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": -194570.64,
+    "y": 14375.1,
+    "z": 17213,
+    "localized_name": "Deep Bamboo Thicket Watchtower",
+    "id": "WatchTower_11"
   },
   "0EBF6F3D441ACA707517B9B7BAA6590D": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
@@ -25,11 +41,19 @@
   },
   "10F777FB4B9BFA0CAD790887D87DDBC2": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -503990.0,
-    "y": -214380.0,
-    "z": -1830.0,
+    "x": -503990,
+    "y": -214380,
+    "z": -1845,
     "localized_name": "Scorched Ashland",
     "id": "FTPoint71"
+  },
+  "11E3E3C44F040B34E3809CB69CD87435": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": -348065.06,
+    "y": 151660.97,
+    "z": 11552.68,
+    "localized_name": "Windswept Island Watchtower",
+    "id": "WatchTower_1"
   },
   "15314BE94E2FB8D018D5749BE9A318F0": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
@@ -51,7 +75,7 @@
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": 512111.75,
     "y": -510662.66,
-    "z": 43480.0,
+    "z": 43480,
     "localized_name": "The Verdant Rootpath",
     "id": "WorldTree_A"
   },
@@ -59,7 +83,7 @@
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -257951.39,
     "y": 151247.84,
-    "z": 7.66,
+    "z": -8.34,
     "localized_name": "Ancient Ritual Site",
     "id": "FTPoint31"
   },
@@ -99,7 +123,7 @@
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": 102159.82,
     "y": 48527.03,
-    "z": 28428.29,
+    "z": 28394.29,
     "localized_name": "Land of Absolute Zero",
     "id": "FTPoint18"
   },
@@ -115,15 +139,15 @@
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -572461.56,
     "y": -287224.06,
-    "z": 45.33,
+    "z": 26.33,
     "localized_name": "Shield Dragon Tunnel",
     "id": "FTPoint81"
   },
   "26F321B44481BC01C5174D9D38409597": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -758105.0,
-    "y": -61810.0,
-    "z": 28905.0,
+    "x": -758105,
+    "y": -61810,
+    "z": 28905,
     "localized_name": "The Azure Tapestry",
     "id": "SkyIsland_D"
   },
@@ -163,14 +187,14 @@
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -50300.98,
     "y": 287392.38,
-    "z": 295.79,
+    "z": 264.79,
     "localized_name": "Sand Dunes Entrance",
     "id": "FTPoint11"
   },
   "2DE1702048A1D4A82126168C49BE51A9": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -177770.0,
-    "y": 265010.0,
+    "x": -177770,
+    "y": 265010,
     "z": 873.17,
     "localized_name": "Mossanda Forest",
     "id": "FTPoint39"
@@ -185,7 +209,7 @@
   },
   "2EE8ACF447C0CFC2C3C11E948E691448": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": 168489.0,
+    "x": 168489,
     "y": 221797.6,
     "z": -2020.14,
     "localized_name": "Isle of the Glacial Core",
@@ -199,6 +223,14 @@
     "localized_name": "Windwatch Outlook",
     "id": "FTPoint108"
   },
+  "31078A16494A996F94DC13828638EAD4": {
+    "class": "BP_LevelObject_TowerFastTravelPoint_C",
+    "x": -153135.81,
+    "y": 589409.5,
+    "z": -2038.8,
+    "localized_name": "Islet of Circular Ruins",
+    "id": "New_SmallIsland01"
+  },
   "321E111B4B7AA9D901864F87404A70F2": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": 524166.12,
@@ -206,6 +238,22 @@
     "z": 25453.11,
     "localized_name": "Whimsical Wisteria Grove",
     "id": "WorldTree_B"
+  },
+  "328BCAC94E01988D944C4F85D49E457C": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": -741294.8,
+    "y": -283378.06,
+    "z": 31715.24,
+    "localized_name": "Loess Plains Watchtower",
+    "id": "WatchTower_17"
+  },
+  "33A82FD24431633F5738F8AE02FFAC42": {
+    "class": "BP_LevelObject_TowerFastTravelPoint_C",
+    "x": -568698.6,
+    "y": -603451.94,
+    "z": -2010.95,
+    "localized_name": "Glacial Memento Islet",
+    "id": "New_SmallIsland05"
   },
   "341551F747D44FA84DB87F8C8D2DCB48": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
@@ -247,27 +295,35 @@
     "localized_name": "Emberstone Plateau",
     "id": "FTPoint80"
   },
+  "3BF1495E406AD5F437DA5AA2134954A2": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": -440660.47,
+    "y": -159426.78,
+    "z": 15264.55,
+    "localized_name": "Dry Sandy Beach Watchtower",
+    "id": "WatchTower_15"
+  },
   "3E8E504B4A3975FD3862E1BC85A5D4F6": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -376750.0,
-    "y": 124630.0,
-    "z": 2270.0,
+    "x": -376750,
+    "y": 124630,
+    "z": 2270,
     "localized_name": "Sea Breeze Archipelago Church",
     "id": "FTPoint53"
   },
   "41727100495D21DC905D309C53989914": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -302825.0,
-    "y": 241060.0,
+    "x": -302825,
+    "y": 241060,
     "z": -1089.69,
     "localized_name": "Fort Ruins",
     "id": "FTPoint28"
   },
   "41E36D9A4B2BA79A3AD1B7B83B16F77D": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -137210.0,
-    "y": -91340.0,
-    "z": -2090.0,
+    "x": -137210,
+    "y": -91340,
+    "z": -2090,
     "localized_name": "Isle of Silence",
     "id": "FTPoint49"
   },
@@ -291,9 +347,25 @@
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": 117624.25,
     "y": 400134.78,
-    "z": -1931.7,
+    "z": -1949.7,
     "localized_name": "Deep Sand Dunes",
     "id": "FTPoint13"
+  },
+  "479A228C4032AAF144B3808E753E1690": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": -634614.8,
+    "y": -310380.88,
+    "z": 34943.29,
+    "localized_name": "Arid Wasteland Watchtower",
+    "id": "WatchTower_21"
+  },
+  "47E04FF245A4FB6F4E1E9C864ED8F2B0": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": 564135,
+    "y": -574054.25,
+    "z": 37021.56,
+    "localized_name": "Dusty Ravine Watchtower",
+    "id": "WatchTower_WorldTree_1"
   },
   "49C3516D459F15C70ABEE88CD7F4D331": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
@@ -305,7 +377,7 @@
   },
   "4B2462954566096EB1EB74A0B48E5C5D": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": 592964.0,
+    "x": 592964,
     "y": -625779.6,
     "z": 17596.23,
     "localized_name": "Remnant Riverside",
@@ -319,6 +391,14 @@
     "localized_name": "Crimson Labyrinth",
     "id": "FTPoint121"
   },
+  "4C204C3842EAB210A7A9DA9D2CF9CBBE": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": -428372,
+    "y": 81104.96,
+    "z": 2593.43,
+    "localized_name": "Sea Breeze Archipelago Watchtower",
+    "id": "WatchTower_10"
+  },
   "4CCF456A440C6CD5F2347AAA3E163F21": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -117215.02,
@@ -327,18 +407,26 @@
     "localized_name": "Arena Entrance",
     "id": "FTPoint63"
   },
+  "4CE584574E74956A7F94D68D846F931D": {
+    "class": "BP_LevelObject_TowerFastTravelPoint_C",
+    "x": -451245,
+    "y": 363338.16,
+    "z": 12413.93,
+    "localized_name": "Scouring Islet",
+    "id": "New_SmallIsland03"
+  },
   "4D2F204549AB656CA1EA4B8E39C484F3": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -125290.0,
-    "y": 201720.0,
-    "z": 6920.0,
+    "x": -125476,
+    "y": 201720,
+    "z": 6886,
     "localized_name": "Snowy Mountain Crossroads",
     "id": "FTPoint36"
   },
   "4DA12CD449AA1A3DB7C6CABF9D6EA90D": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -105662.5,
-    "y": 400797.0,
+    "y": 400797,
     "z": 5159.21,
     "localized_name": "Sandbar of Solitude",
     "id": "FTPoint104"
@@ -353,9 +441,9 @@
   },
   "513E166044565A0BD3360F94142577E8": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -282110.0,
-    "y": 355570.0,
-    "z": -1940.0,
+    "x": -282110,
+    "y": 355570,
+    "z": -1940,
     "localized_name": "Marsh Island",
     "id": "FTPoint56"
   },
@@ -363,23 +451,39 @@
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -197915.22,
     "y": 438001.44,
-    "z": -2064.68,
+    "z": -2071.68,
     "localized_name": "Isle of Decayed Treasures",
     "id": "FTPoint89"
+  },
+  "5543641F4C980A9863F64685A91FE619": {
+    "class": "BP_LevelObject_TowerFastTravelPoint_C",
+    "x": 621794.3,
+    "y": -757914.56,
+    "z": 21127.6,
+    "localized_name": "Forbidden Laboratory",
+    "id": "WorldTree_MiddleBoss_3"
   },
   "5669E36645C97EE9F38D308738ED30A7": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -558410.44,
     "y": 121112.1,
-    "z": -1587.23,
+    "z": -1607.23,
     "localized_name": "Frostbitten Isle",
     "id": "FTPoint87"
   },
+  "58A29B814E069D61EC75B1A6E9658FC1": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": -192413.88,
+    "y": 393187.28,
+    "z": 11260.54,
+    "localized_name": "Eastern Wild Island Watchtower",
+    "id": "WatchTower_2"
+  },
   "596996B948716D3FD2283C8B5C6E829C": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -450320.0,
-    "y": 112630.0,
-    "z": -2090.0,
+    "x": -450320,
+    "y": 112630,
+    "z": -2090,
     "localized_name": "Sea Breeze Archipelago - Castaway Beach",
     "id": "FTPoint52"
   },
@@ -387,7 +491,7 @@
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -367707.78,
     "y": -114950.9,
-    "z": 61380.66,
+    "z": 61372.66,
     "localized_name": "Eternal Pyre Tower Entrance",
     "id": "FTPoint3"
   },
@@ -401,19 +505,27 @@
   },
   "59D857664636366A726EB39EF372B315": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": 621850.0,
-    "y": -742575.0,
-    "z": 23205.0,
+    "x": 621850,
+    "y": -742575,
+    "z": 23205,
     "localized_name": "Abandoned Laboratory",
     "id": "WorldTree_lab"
   },
   "5F426B49469368B0C131D3A6DB8F7831": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -465895.0,
+    "x": -465895,
     "y": -62137.75,
     "z": -1834.44,
     "localized_name": "Fisherman's Point",
     "id": "FTPoint5"
+  },
+  "5FA6EB494384E4134BAA589F02A580DC": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": -784793.9,
+    "y": -354726.72,
+    "z": 19680.76,
+    "localized_name": "Frozen Coral Hill Watchtower",
+    "id": "WatchTower_20"
   },
   "603ED0CD4CFB9AFDC9E11F805594CCE5": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
@@ -441,16 +553,16 @@
   },
   "6282FE1E4029EDCDB14135AA4C171E4C": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -314840.0,
-    "y": 186850.0,
-    "z": 3270.0,
+    "x": -314840,
+    "y": 186850,
+    "z": 3270,
     "localized_name": "Desolate Church",
     "id": "FTPoint22"
   },
   "630C0726466D28CDB94B368AD12BFE63": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": 477460.0,
-    "y": -724635.0,
+    "x": 477460,
+    "y": -724635,
     "z": 19817.89,
     "localized_name": "Lacrymal Shoal",
     "id": "WorldTree_M"
@@ -463,6 +575,14 @@
     "localized_name": "PIDF Tower Entrance",
     "id": "FTPoint9"
   },
+  "6948B7914C8D1701DB7F4081E4D970E5": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": -627561.25,
+    "y": -208730.97,
+    "z": 20437.01,
+    "localized_name": "Burning Fault Watchtower",
+    "id": "WatchTower_18"
+  },
   "69A3B9E64018BA4C158BDDA7CD713463": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -714540.9,
@@ -473,8 +593,8 @@
   },
   "6B05B93C445473B5A9597A90CEBFF27B": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -591120.0,
-    "y": -484260.0,
+    "x": -591120,
+    "y": -484260,
     "z": 6808.79,
     "localized_name": "Deserted Ash Plateau",
     "id": "FTPoint79"
@@ -483,23 +603,23 @@
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -760285.44,
     "y": -354966.22,
-    "z": 4300.47,
+    "z": 4290.47,
     "localized_name": "The Oculus Gate, Tower in Sight",
     "id": "FTPoint75"
   },
   "6DB6B7B2431CA2EFFFC88EB45805BA6A": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -294830.0,
-    "y": 152240.0,
-    "z": 190.0,
+    "x": -294830,
+    "y": 152240,
+    "z": 190,
     "localized_name": "Bridge of the Twin Knights",
     "id": "FTPoint61"
   },
   "6E03F8464BAD9E458B843AA30BE1CC8F": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -358785.0,
-    "y": 267940.0,
-    "z": 7910.0,
+    "x": -358785,
+    "y": 267940,
+    "z": 7910,
     "localized_name": "Hill of Beginnings",
     "id": "FTPoint23"
   },
@@ -521,9 +641,9 @@
   },
   "7170881D44249E90902F728E240493AF": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -265980.0,
-    "y": 268690.0,
-    "z": -1970.0,
+    "x": -265980,
+    "y": 268690,
+    "z": -1979,
     "localized_name": "Islandhopper Coast",
     "id": "FTPoint55"
   },
@@ -531,30 +651,30 @@
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -80506.16,
     "y": 141464.77,
-    "z": 8140.14,
+    "z": 8131.14,
     "localized_name": "No Man's Trail",
     "id": "FTPoint15"
   },
   "72626BD0492AD65E59BDB499C9BED99A": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -699510.0,
-    "y": -389030.0,
-    "z": 32620.0,
+    "x": -699510,
+    "y": -389030,
+    "z": 32620,
     "localized_name": "Scorched Hill",
     "id": "FTPoint78"
   },
   "74270C2F45B8DCA66B6A1FAAA911D024": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -319000.0,
-    "y": 127170.0,
+    "x": -319000,
+    "y": 127170,
     "z": -2049.45,
     "localized_name": "Ravine Entrance",
     "id": "FTPoint62"
   },
   "75BD9923489E2A4EBCED5A81175D5928": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": 6.0,
-    "y": -0.0,
+    "x": 6,
+    "y": 0,
     "z": 6588.96,
     "localized_name": "Pristine Snow Field",
     "id": "FTPoint48"
@@ -577,11 +697,19 @@
   },
   "79C561B747335A7A0A8FBF9FAE280E62": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -283781.0,
+    "x": -283781,
     "y": 59352.68,
-    "z": 5251.39,
+    "z": 5226.39,
     "localized_name": "Sealed Realm of the Swordmaster",
     "id": "FTPoint29"
+  },
+  "7A803ABD4C208C8D5C7EE197C9D2AD65": {
+    "class": "BP_LevelObject_TowerFastTravelPoint_C",
+    "x": -426910.2,
+    "y": -436850.9,
+    "z": -134.48,
+    "localized_name": "Sandstone Gate Islet",
+    "id": "New_SmallIsland06"
   },
   "80729706432E53B2A3D07C82D14C8749": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
@@ -593,7 +721,7 @@
   },
   "825ED1AD422E5E0C94332C835B74D3B4": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -38212.0,
+    "x": -38212,
     "y": 406147.06,
     "z": 10096.22,
     "localized_name": "Desert Backbone",
@@ -623,6 +751,14 @@
     "localized_name": "Gilded City Ruins",
     "id": "WorldTree_N"
   },
+  "84D48EA34666191781868E809ACBCBCE": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": 80120.2,
+    "y": 21277.26,
+    "z": 33828.99,
+    "localized_name": "Astral Mountains Garden Watchtower",
+    "id": "WatchTower_8"
+  },
   "866881DB443444AA7F4E7C8E5DCDAA29": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -250506.48,
@@ -631,9 +767,17 @@
     "localized_name": "Marsh Island Church Ruins",
     "id": "FTPoint60"
   },
+  "8A9AE3B44AD758EDD7FE44BA9B75000B": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": 85482.98,
+    "y": 306597.12,
+    "z": 17835.3,
+    "localized_name": "Sandstone Plateau Watchtower",
+    "id": "WatchTower_5"
+  },
   "8C1EE640439F980EA6BA3D9B256D4FAD": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -644486.0,
+    "x": -644486,
     "y": -276536.5,
     "z": 11481.62,
     "localized_name": "Crystallized Great Tree",
@@ -641,9 +785,9 @@
   },
   "8CA5E9774FF1BBC1156ABCA09E616480": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -374180.0,
-    "y": 63960.0,
-    "z": -1920.0,
+    "x": -374180,
+    "y": 63960,
+    "z": -1933,
     "localized_name": "Small Cove",
     "id": "FTPoint54"
   },
@@ -657,33 +801,33 @@
   },
   "916CC96142D38225BD3C9290D6321073": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -588140.0,
-    "y": -253780.0,
-    "z": 720.0,
+    "x": -588140,
+    "y": -253780,
+    "z": 695,
     "localized_name": "Stone Pillar Cave Entrance",
     "id": "FTPoint72"
   },
   "91DAC6F34D2A9FD7F01471B5166C6C02": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -170400.0,
-    "y": -29240.0,
-    "z": -1930.0,
+    "x": -170400,
+    "y": -29240,
+    "z": -1930,
     "localized_name": "Kelpsea Hill",
     "id": "FTPoint51"
   },
   "923B781345D2AB7ECED6BABD6E97ECE8": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -237610.0,
-    "y": 190610.0,
+    "x": -237610,
+    "y": 190610,
     "z": 3987.78,
     "localized_name": "Hypocrite Hill",
     "id": "FTPoint34"
   },
   "9521FEBF4A6D0D02AE9F80AE9513B99C": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -888080.0,
-    "y": -433080.0,
-    "z": 19030.0,
+    "x": -888080,
+    "y": -433080,
+    "z": 19030,
     "localized_name": "Feybreak Tower Entrance",
     "id": "FTPoint76"
   },
@@ -715,7 +859,7 @@
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -63520.73,
     "y": -55005.94,
-    "z": -1711.81,
+    "z": -1731.81,
     "localized_name": "Sakurajima - Mushroom Wetlands",
     "id": "FTPoint64"
   },
@@ -737,41 +881,49 @@
   },
   "A277AE6341EF40D84D711EA52303353F": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -115430.0,
-    "y": 289090.0,
+    "x": -115430,
+    "y": 289090,
     "z": 3045.16,
     "localized_name": "Sealed Realm of the Swift",
     "id": "FTPoint38"
   },
   "A51FC0C147435750046C48B254793A8B": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -265220.0,
-    "y": 173530.0,
-    "z": 5810.0,
+    "x": -265220,
+    "y": 173530,
+    "z": 5810,
     "localized_name": "Free Pal Alliance Tower Entrance",
     "id": "Boss_Forest"
   },
   "A5664AB74E0D030D03BF2DAF87C67A0F": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": 501010.0,
-    "y": -748555.0,
-    "z": 41485.0,
+    "x": 501010,
+    "y": -748555,
+    "z": 41485,
     "localized_name": "Within the Seal",
     "id": "WorldTree_LastBoss"
   },
+  "A9213E6E425F2F696D8B3EB19AA547FE": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": 508240.53,
+    "y": -696869.5,
+    "z": 39688.38,
+    "localized_name": "Gilded City Ruins Watchtower",
+    "id": "WatchTower_WorldTree_2"
+  },
   "ACAE5FB04D48DE4197443E9C0993086B": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -151783.97,
-    "y": 213200.86,
-    "z": 3277.12,
+    "x": -151842,
+    "y": 213101.45,
+    "z": 3279.44,
     "localized_name": "Sealed Realm of the Mystic",
     "id": "FTPoint35"
   },
   "AEBCC3FF41ACF9252B3499A89E0BAD55": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -777490.0,
-    "y": -40589.0,
-    "z": 60158.0,
+    "x": -777490,
+    "y": -40589,
+    "z": 60158,
     "localized_name": "Azure Covenant Tower Entrance",
     "id": "SkyIsland_BOSS"
   },
@@ -787,7 +939,7 @@
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -218636.78,
     "y": 58528.14,
-    "z": 3731.15,
+    "z": 3716.15,
     "localized_name": "Investigator's Fork",
     "id": "FTPoint30"
   },
@@ -819,9 +971,17 @@
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -215388.52,
     "y": 8854.22,
-    "z": 13174.68,
+    "z": 13150.68,
     "localized_name": "Deep Bamboo Thicket",
     "id": "FTPoint43"
+  },
+  "B5A9156C4C3911FD3A4FFA8F807DD5A4": {
+    "class": "BP_LevelObject_TowerFastTravelPoint_C",
+    "x": -61819.01,
+    "y": -246053.52,
+    "z": -1979.87,
+    "localized_name": "Suncrest Islet",
+    "id": "New_SmallIsland07"
   },
   "B795E2B14189A7D1EEAD6E97E89C91B7": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
@@ -843,9 +1003,17 @@
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -219172.86,
     "y": 226394.84,
-    "z": -1956.38,
+    "z": -1970.38,
     "localized_name": "Gobfin's Turf",
     "id": "FTPoint40"
+  },
+  "C1D34C6C424DD841005934936F590865": {
+    "class": "BP_LevelObject_TowerFastTravelPoint_C",
+    "x": 63442.54,
+    "y": 507395.38,
+    "z": -1871.36,
+    "localized_name": "Flamepulse Islet",
+    "id": "New_SmallIsland02"
   },
   "C2A21FB148CA559F4814029637CEF75F": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
@@ -879,11 +1047,19 @@
     "localized_name": "Anubis Dunes",
     "id": "FTPoint92"
   },
+  "C5E2ABA14A8F6D35EF4A81AD47EC19C9": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": -629186.6,
+    "y": -425621.62,
+    "z": 29177.29,
+    "localized_name": "Scorched Plateau Watchtower",
+    "id": "WatchTower_19"
+  },
   "C5F1A3CA46EAE25B999783B3ECC569ED": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": 483205.0,
-    "y": -672790.0,
-    "z": 18210.0,
+    "x": 483205,
+    "y": -672790,
+    "z": 18210,
     "localized_name": "Spore Cloister",
     "id": "WorldTree_L"
   },
@@ -919,6 +1095,14 @@
     "localized_name": "Curved Redrock",
     "id": "FTPoint119"
   },
+  "CCCD29E444CEB548D5B5E589DAF086F2": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": -30426.69,
+    "y": 364547.25,
+    "z": 9125.22,
+    "localized_name": "Searing Dunes Watchtower",
+    "id": "WatchTower_4"
+  },
   "CD9FE0D4490874187ED9919D0E4D2A09": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -237086.58,
@@ -927,11 +1111,19 @@
     "localized_name": "Ruined Fortress City",
     "id": "FTPoint8"
   },
+  "CE7CDCFA48F15174B4FCF49C03F240ED": {
+    "class": "BP_LevelObject_TowerFastTravelPoint_C",
+    "x": -984033.7,
+    "y": -371189.75,
+    "z": -2048.88,
+    "localized_name": "Bicornis Islet",
+    "id": "New_SmallIsland04"
+  },
   "CF5FAE4A487231DDD8487C9B19453128": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -33882.15,
     "y": 564292.5,
-    "z": -2102.58,
+    "z": -2106.58,
     "localized_name": "Oasis Isle",
     "id": "FTPoint85"
   },
@@ -945,11 +1137,19 @@
   },
   "D786C6324A293AB1560774B15B998290": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": 491660.0,
-    "y": -593705.0,
-    "z": 17375.0,
+    "x": 491660,
+    "y": -593705,
+    "z": 17375,
     "localized_name": "Alluvion Lakefront",
     "id": "WorldTree_E"
+  },
+  "D8C1A86541DACA78B1250AB9B85B7E67": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": -197246.98,
+    "y": 140509.75,
+    "z": 9963.95,
+    "localized_name": "Crescent Moon Shore Watchtower",
+    "id": "WatchTower_3"
   },
   "DC0ECF9241B4410C59EE619F56D1106A": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
@@ -977,33 +1177,41 @@
   },
   "DDBBFFAF43D9219AE68DF98744DF0831": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -342035.0,
-    "y": 236885.0,
+    "x": -342035,
+    "y": 236885,
     "z": -1751.61,
     "localized_name": "Grassy Behemoth Hills",
     "id": "FTPoint21"
   },
   "DEAA0D38438D8CF02BC7CC82621B33B0": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -792350.0,
-    "y": -251110.0,
-    "z": -540.0,
+    "x": -792350,
+    "y": -251110,
+    "z": -558,
     "localized_name": "Loess Plains",
     "id": "FTPoint73"
   },
+  "DEE0F8BB4609C83285CE6CA80B84B679": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": -169159,
+    "y": 251231.89,
+    "z": 18801.84,
+    "localized_name": "Verdant Stream Watchtower",
+    "id": "WatchTower_6"
+  },
   "DF9FB9CB41B43052A9C74FA79A826A50": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -338560.0,
-    "y": 107660.0,
-    "z": -1390.0,
+    "x": -338560,
+    "y": 107660,
+    "z": -1390,
     "localized_name": "Sealed Realm of the Ardent",
     "id": "FTPoint42"
   },
   "E0819EFB41581AEAC3A029B0EE2FE195": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": 89644.01,
-    "y": 94542.2,
-    "z": 67275.08,
+    "x": 89624.98,
+    "y": 94363.32,
+    "z": 67279.08,
     "localized_name": "PAL Genetic Research Unit Tower Entrance",
     "id": "FTPoint20"
   },
@@ -1015,6 +1223,14 @@
     "localized_name": "Sunlit Isle",
     "id": "FTPoint84"
   },
+  "E8351DF348B268672F0A219840C6BE47": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": -364381.7,
+    "y": -55619.27,
+    "z": 21182.74,
+    "localized_name": "Scorched Obsidian Watchtower",
+    "id": "WatchTower_13"
+  },
   "E8A85FF544C205E1B04F7E93109B8197": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -71914.8,
@@ -1022,6 +1238,22 @@
     "z": -2019.31,
     "localized_name": "Thirst's End",
     "id": "FTPoint102"
+  },
+  "E9FC08444BFE7E3EE6E06F84AC8688EC": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": -26445.19,
+    "y": 140098.22,
+    "z": 24138.19,
+    "localized_name": "Icy Weasel Hill Watchtower",
+    "id": "WatchTower_7"
+  },
+  "EA56C74B459DAB2F5F596EA17049167A": {
+    "class": "BP_LevelObject_TowerFastTravelPoint_C",
+    "x": 405904.9,
+    "y": -729214.1,
+    "z": 22741.15,
+    "localized_name": "Shinespore Root",
+    "id": "WorldTree_MiddleBoss_2"
   },
   "EC4896F44C4C9BD993DAE2B2C1F31BBA": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
@@ -1035,15 +1267,23 @@
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -39402.43,
     "y": 159611.86,
-    "z": 17025.17,
+    "z": 16996.17,
     "localized_name": "Icy Weasel Hill",
     "id": "FTPoint16"
+  },
+  "EDE1AB2C44B1846879BB789C3951B2F7": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": -291317.66,
+    "y": 50195.65,
+    "z": 14675.52,
+    "localized_name": "Bamboo Groves Watchtower",
+    "id": "WatchTower_9"
   },
   "F1A1AB834E138B2A938D0AA90E9A65E3": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -86709.57,
     "y": -140441.75,
-    "z": -2031.0,
+    "z": -2031,
     "localized_name": "Sakurajima - Southern Sandbar",
     "id": "FTPoint65"
   },
@@ -1051,7 +1291,7 @@
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -698514.94,
     "y": -322880.4,
-    "z": 15540.0,
+    "z": 15540,
     "localized_name": "Hidden Passage to the Oculus Gate",
     "id": "FTPoint74"
   },
@@ -1079,6 +1319,14 @@
     "localized_name": "Whisperwind Hill",
     "id": "FTPoint94"
   },
+  "F46296FF4274FEDBF32DC5957835A18A": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": -49811.68,
+    "y": -104909.2,
+    "z": 6064.37,
+    "localized_name": "Sakurajima Watchtower",
+    "id": "WatchTower_12"
+  },
   "F6AFBCDA4D7AF6C373407DBC8556FBAE": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
     "x": -488718.2,
@@ -1105,9 +1353,9 @@
   },
   "F8DF603B4C750B37D943C9AF6A911946": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -221230.0,
-    "y": 165130.0,
-    "z": -40.0,
+    "x": -221230,
+    "y": 165130,
+    "z": -54,
     "localized_name": "Lake Center",
     "id": "FTPoint33"
   },
@@ -1119,12 +1367,28 @@
     "localized_name": "Mount Obsidian - Anubis Statue",
     "id": "FTPoint6"
   },
+  "F94B3D32448028F24CE513B1302ACC94": {
+    "class": "BP_LevelObject_TowerFastTravelPoint_C",
+    "x": 628791.56,
+    "y": -610720.44,
+    "z": 28290.31,
+    "localized_name": "Rotmist Root",
+    "id": "WorldTree_MiddleBoss_1"
+  },
   "FC8F024D40741A133EB9DA88201AE7F0": {
     "class": "BP_LevelObject_TowerFastTravelPoint_C",
-    "x": -578061.0,
+    "x": -578061,
     "y": -158216.08,
     "z": 7648.47,
     "localized_name": "Crimson Cliffs",
     "id": "FTPoint117"
+  },
+  "FD235A5B4F02CD76312A459D77398CA6": {
+    "class": "BP_LevelObject_UnlockMapPoint_C",
+    "x": -809414.25,
+    "y": 23955.22,
+    "z": 48140.3,
+    "localized_name": "Sunreach Watchtower",
+    "id": "WatchTower_22"
   }
 }
